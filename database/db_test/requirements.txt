@@ -1,0 +1,2 @@
+psycopg2-binary  # PostgreSQL adapter for Python
+python-dotenv    # For environment variable management

@@ -1,0 +1,20 @@
+client_name: mysyara
+mode: SIP # SIP, CONSOLE
+record_audio: False
+
+store_transcription:
+  switch: True # True, False
+  where: s3 # local, s3, both
+
+welcome_msg: True
+use_rag: False
+rag_file: "blank"
+bg_office_noise: False
+bg_thinking_sound: False
+idle_call_hungup: True
+
+llm: openai
+model: gpt4o
+
+TTS: cartesia # elevenlabs/cartesia/aws/neuphonic/deepgram - azure/playai is not working currently.
+idle_call_watcher_msg: "Hello there! Could you please respond? I am here to help."

@@ -1,0 +1,14 @@
+{
+    "name": "Twilio Inbound calls",
+    "trunk_ids":["ST_8m7VHLd9WJDH"],
+    "rule": {
+      "dispatchRuleIndividual": {
+        "roomPrefix": "call-"
+      }
+    },
+    "roomConfig": {
+        "agents": [{
+            "agentName": "Mysyara Agent"
+        }]
+    }
+}

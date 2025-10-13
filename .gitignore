@@ -1,0 +1,14 @@
+# Ignore environment files
+*.env
+*.env.*
+.env
+
+venv/
+.DS_Store
+log/
+logs/
+outbound-trunk.json
+__pycache__/
+node_modules/
+dist/
+frontend/node_modules/*

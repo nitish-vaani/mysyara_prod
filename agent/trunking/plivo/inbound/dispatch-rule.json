@@ -1,0 +1,14 @@
+{
+    "name": "Plivo Inbound calls",
+    "trunk_ids":["ST_T7Ko6854eEhk"],
+    "rule": {
+      "dispatchRuleIndividual": {
+        "roomPrefix": "call-"
+      }
+    },
+    "roomConfig": {
+        "agents": [{
+            "agentName": "Mysyara-Inbound-Agent"
+        }]
+    }
+}

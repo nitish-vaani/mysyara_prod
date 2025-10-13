@@ -1,0 +1,64 @@
+.circle {
+    width: 2rem;
+    height: 2rem;
+    background-color: white;
+    border-radius: 50%;
+    border: none;
+}
+
+.tryout h3 {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 100;
+    margin-block: 1rem;
+}
+
+.tryout h2 {
+    width: 40vw;
+    line-height: 2rem;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: rgb(57, 57, 57);
+    margin-top: 4vh;
+}
+
+.tryout {
+    padding-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.tryout h1 {
+    font-size: 3.1rem;
+    font-weight: 300;
+    text-align: center;
+    position: relative;
+    margin-top: 1%;
+    margin-bottom: 10%;
+    text-align: left;
+}
+
+.tryout h1>span {
+
+    font-weight: 500;
+
+}
+
+.tryout h2>span {
+    font-weight: 800;
+}
+
+h2 .feedback-home i {
+    position: relative;
+    top: 5px
+}
+
+.tryout .feedback-home {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+}

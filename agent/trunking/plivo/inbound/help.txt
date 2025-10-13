@@ -1,0 +1,32 @@
+#To view all the inbouns trunks
+export $(grep -v '^#' ".env.local" | xargs)
+lk sip inbound list
+
+#Update the inbound.json accrdong to your setup
+lk sip inbound create ./trunking/plivo/inbound/inbound.json
+This will give an SIPTrunkID, update it in dispatch-rule.json
+
+#Update the dispatch-rule.json according to your setup
+lk sip dispatch create ./trunking/plivo/inbound/dispatch-rule.json
+#This will give a SIPDispatchRuleID, update it in .env 
+
+#To delete an inbound trunk
+lk sip inbound delete <ST_PRjMywQC5HVX>
+
+#To view all the sip dispatch list
+lk sip dispatch list
+
+#To update the dispatch agent
+    #Delete the existing agent
+    (1) List dispatch agent
+    lk sip dispatch list
+        Using url, api-key, api-secret from environment
+        ┌───────────────────┬──────┬───────────┬──────┬──────────┬─────┬────────────┬────────┐
+        │ SipDispatchRuleID │ Name │ SipTrunks │ Type │ RoomName │ Pin │ Attributes │ Agents │
+        ├───────────────────┼──────┼───────────┼──────┼──────────┼─────┼────────────┼────────┤
+        └───────────────────┴──────┴───────────┴──────┴──────────┴─────┴────────────┴────────┘
+    (2) Take the SipDispatchRuleID and delete using the command
+        lk sip dispatch delete <SipDispatchRuleID>
+
+    (3) Update the dispatch-rule.json file and then run 
+        lk sip dispatch create ./trunking/plivo/inbound/dispatch-rule.json

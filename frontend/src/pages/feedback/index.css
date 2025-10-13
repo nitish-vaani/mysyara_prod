@@ -1,0 +1,121 @@
+.feedback{
+
+    background-color: #f5f1ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: max-content;
+    margin-inline:3vw ;
+    border-radius: 20px;
+    flex-direction: column;
+
+    .feedback-body{
+        display: flex;
+        justify-content: center;
+        width: 100%;
+
+    }
+    
+    .p-slider-handle{
+        background-color: gray;
+        border: gray;
+        height: 2rem;
+        width: 2rem;
+        top:-30%;
+    }
+
+    .p-slider{
+        background-color: rgb(183, 183, 183);
+        border: rgb(168, 168, 168);
+        width: 100%;
+    }
+    .p-slider-range{
+        background-color: rgb(134, 134, 134);
+        border: rgb(48, 48, 48);
+    }
+    button{
+        border:none;
+        color:white;
+        background-color: rgb(54, 54, 54);
+        height: 4rem;
+        width: 20rem;
+        border-radius: 20px;
+        font-size: 1.7rem;
+        cursor: pointer;
+        margin-bottom: 2rem;
+    }
+    
+   button:hover{
+        background-color: rgb(50, 52, 55); ;
+    } 
+
+    .feedback-text{
+        margin: 3rem;
+        width: 100%;
+        textarea{
+            resize: none;
+            font-size: 1.5rem;
+            border-radius: 20px;
+            padding: 1rem;
+            border: none;
+            position: relative;
+            bottom: 2rem;
+    
+        }
+
+        textarea:focus{
+            resize: none;
+            font-size: 1.5rem;
+            border-radius: 20px;
+            padding: 1rem;
+            border: none;
+            box-shadow: none;
+            outline: none;
+    
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-block: 1rem;
+            position: relative;
+            bottom: 4rem;
+            font-weight: 300;
+            display: flex;
+            gap: 1rem;
+            margin-top:3rem
+        }
+
+        img{
+            height: 4rem;
+
+
+        }
+    }
+    .feedback-form{
+        width: 100%;
+        padding-block: 10rem;
+        padding-right: 3%;
+        font-size: 1.6rem;
+        white-space: nowrap;
+
+        >div{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            white-space: nowrap;
+            gap: 40px;
+            font-size: 1.4rem;
+        }
+
+        .small-gray {
+            font-size: 1.2rem; 
+            color: gray;
+        }
+        p{
+            min-width: 30rem;
+        }
+    }
+   
+
+
+}

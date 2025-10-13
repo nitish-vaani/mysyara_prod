@@ -1,0 +1,6 @@
+{
+    "trunk": {
+      "name": "Plivo inbound trunk",
+      "numbers": ["+912269539746"]
+    }
+  }

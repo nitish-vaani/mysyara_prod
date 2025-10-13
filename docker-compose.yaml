@@ -1,0 +1,20 @@
+services:
+  livekit:
+    image: vaaniresearch/updated_lk:latest
+    
+    container_name: livekit_mysyara
+    ports:
+      - 8000:1234
+    volumes:
+       - /home/azureuser/mysyara_prod:/app
+
+  frontend:
+    container_name: frontend_mysyara
+    build:
+      context: .
+      dockerfile: ./Dockerfile_frontend
+    ports:
+      - "8001:80"
+    restart: always
+    volumes:
+      - /home/azureuser/mysyara_prod/frontend:/app

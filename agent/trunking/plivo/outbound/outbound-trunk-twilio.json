@@ -1,0 +1,11 @@
+{
+    "trunk": {
+        "name": "vaani_livekit",
+        "address": "12512202179.pstn.twilio.com:5060",
+        "numbers": [
+            "+12512202179"
+        ],
+        "auth_username": "livekit_aws",
+        "auth_password": "Livekit_aws@123"
+    }
+}

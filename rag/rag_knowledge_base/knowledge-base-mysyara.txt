@@ -1,0 +1,284 @@
+    About Mysyara:
+        MySyara is the UAE's leading app-based auto care solution that offers a wide range of car maintenance and repair services. It provides both doorstep services and in-garage services through its fleet of mobile units and strategically located garages. We provide a high quality, convenient, and transparent car care experience. We are affordable, reliable, and accessible, with a focus on customer satisfaction.
+        We have a high rating of 4.5/5 on Google, with over 100k satisfied customers.
+        Our services are performed using fully synthetic Mobil lubricants, known for their exceptional quality and engine protection. We also use high-quality OEM parts, and offer OES (Original Equipment Supplier) parts as a reliable alternative.
+        We provide a 6-month warranty on parts and workmanship for all service and repair jobs.
+
+    Servicing Details:
+        Every car service at MySyara includes a comprehensive multi-point vehicle inspection, free of charge. This ensures peace of mind and complete transparency before and after your service.
+
+        Our car inspections cover:
+        - Engine oil quality & remaining life
+        - Battery condition & terminal health
+        - Brake pads & disc measurements (front and rear)
+        - Tire tread depth, PSI, and wheel alignment checks
+        - Suspension & steering components (shock absorbers, ball joints, control arms)
+        - Fluid levels (engine oil, coolant, transmission, brake fluid, power steering)
+        - Windshield & wiper condition
+        - AC system functionality and airflow
+        - Lights and electricals (including scan for check engine lights)
+        - Underbody inspection and paint/body damages
+        - OBD scan for electrical faults
+
+        Our regular / minor car servicing includes:
+        - Oil + oil filter replacement
+        - All fluid top ups:
+            * Power steering fluid
+            * Brake fluid
+            * Washer fluid
+            * Coolant top up
+        - Checks:
+            * Comprehensive car diagnostics
+            * Check brakes, suspensions, Spark plugs, drive belt etc
+            * AC filter cleaning
+            * Air filter cleaning
+        - Free exterior wash
+        - Free interior clean
+        - Free pick and drop
+
+        MySyara also has an online auto parts shop for tyres, batteries, lubricants, car parts, car accessories, wiper blades and more. We can deliver these parts to your doorstep or have them ready for pickup at our garages.
+
+
+    City wise Services Offered by MySyara (by Emirate)
+
+    In 'Dubai' following services are offered.
+        - On-demand Doorstep Car Wash
+        - Monthly Doorstep Car Wash Subscription
+        - In-Garage Car Wash
+        - Car Servicing
+        - Oil Change
+        - Doorstep Battery Replacement & Boosting
+        - Pre-Purchase Inspections
+        - Car Detailing & Tinting
+        - Painting & Denting
+        - Tire Replacement
+        - Engine Diagnostics
+        - On-Demand Repairs
+        - Car Renewal & Registration Assistance
+
+    In 'Abu Dhabi' following services are offered:
+        - Car Servicing
+        - Oil Change
+        - In-Garage Car Wash
+        - Battery Replacement & Boosting
+        - Pre-Purchase Inspections
+        - Car Detailing & Tinting
+        - Painting & Denting
+        - Tire Replacement
+        - Engine Diagnostics
+        - On-Demand Repairs
+        - Car Renewal & Registration Assistance
+
+    In 'Sharjah' following services are offered:
+        - Car Servicing
+        - Oil Change
+        - Battery Replacement & Boosting
+
+    In 'Ajman' following services are offered:
+        - In-Garage Car Wash
+        - Car Servicing
+        - Oil Change
+        - Battery Replacement & Boosting
+
+    Currently, No Services are offered in 'Fujairah', 'Ras Al Khaimah', 'Al Ain', 'Umm Al Quwain'.
+
+
+    City wise Garage Locations & Services Offered in that garage location:
+
+    In 'Dubai', Garages are located in 'Al Quoz Industrial Area 3', 'Umm Ramool, Rashidiya', 'Ras Al Khor', 'Mirdif, Wadi Al Amardi' and 'Deira'. Details of each garage is following:
+        1. Location: 'Al Quoz Industrial Area 3', Dubai
+            Services Offered:
+                - Car Wash
+                - Car Servicing
+                - Oil Change
+                - Battery Replacement & Boosting
+                - Pre-Purchase Inspections
+                - Tire Replacement
+                - Engine Diagnostics
+                - On-Demand Repairs
+
+        2. Loation: 'Umm Ramool, Rashidiya', Dubai
+            Services Offered:
+                - Car Wash
+                - Car Servicing
+                - Oil Change
+                - Battery Replacement & Boosting
+                - Pre-Purchase Inspections
+                - Tire Replacement
+                - Engine Diagnostics
+                - On-Demand Repairs
+
+        3. Location: 'Ras Al Khor', Dubai
+            Services Offered:
+                - Car Servicing
+                - Oil Change
+                - Battery Replacement & Boosting
+                - Pre-Purchase Inspections
+                - Tire Replacement
+                - Engine Diagnostics
+                - On-Demand Repairs
+                - Transmission Overhauling
+
+        4. Location: 'Mirdif, Wadi Al Amardi', Dubai
+            Services Offered:
+                - Car Servicing
+                - Oil Change
+                - Battery Replacement & Boosting
+                - Pre-Purchase Inspections
+                - Tire Replacement
+                - Engine Diagnostics
+                - On-Demand Repairs
+
+        5. Location: 'Deira', Dubai
+            Services Offered:
+                - Car Servicing
+                - Oil Change
+                - Battery Replacement & Boosting
+                - Pre-Purchase Inspections
+                - Tire Replacement
+                - Engine Diagnostics
+                - On-Demand Repairs
+                - Painting & Denting
+                - Detailing & Tinting
+
+    In 'Abu Dhabi' only one garage is located:
+        1. Location: 'Mussafah', Abu Dhabi
+            Services Offered:
+                - Car Wash
+                - Car Servicing
+                - Oil Change
+                - Battery Replacement & Boosting
+                - Pre-Purchase Inspections
+                - Tire Replacement
+                - Engine Diagnostics
+                - On-Demand Repairs
+                - Painting & Denting
+                - Detailing & Tinting
+
+    In 'Ajman' only one garage is located:
+        1. Location: Rawda, Ajman
+            Services Offered:
+                - Car Wash
+                - Car Servicing
+                - Oil Change
+                - Battery Replacement & Boosting
+                - Engine Diagnostics
+                - On-Demand Repairs
+
+    In 'Sharjah' garage is not located but we pick up from there and bring to nearest garage in Dubai or Ajman OR Customer can also visit if they want.
+
+    Booking & Support Information:
+        - Service Booking Methods: MySyara App (iOS & Android), Website, WhatsApp Chat
+        - Payment Options: Card, Apple Pay, Cash, BNPL (Installments on selected services)
+        - Pickup & Delivery: Available across serviced emirates
+        - Live Tracking: Available via app
+        - Support Channels: In-app chat, phone, WhatsApp
+
+
+    Frequently Asked Questions:
+    Q: Do I need to go to a garage for service? 
+    A: Not always. Most services can be done at your doorstep or with pickup & delivery included.
+
+    Q: Can I track my service? 
+    A: Yes! You can track technician arrival and service progress live via the MySyara app.
+
+    Q: Do you service all car brands? 
+    A: Yes, MySyara services all major car brands with certified technicians and OEM-grade parts.
+
+    Q: Is there a warranty on services? 
+    A: Yes, we offer a 6-month warranty on parts and workmanship for all service and repair jobs.
+
+    Q: Can I schedule regular maintenance? 
+    A: Absolutely. MySyara offers maintenance packages and reminders for periodic servicing.
+
+    *********** Car Wash Service related details
+
+    # Doorstep Car Wash Service by MySyara
+
+    Doorstep car wash is currently available only in Dubai (city area).
+    MySyara offers a premium, on-demand, doorstep car wash service. Whether you're at home, work, or anywhere in between, our highly trained washers arrive at your location fully equipped to clean your car inside and out. Our waterless eco-friendly washing that can save over 100 liters per wash. 
+    This is not a pressure wash. Our washer comes on a motorcycle with the cleaning products and vacuum cleaner.
+
+    We also have an in-garage car wash service, which is different than the doorstep one. We usually carry it out after a periodic car service. 
+    We also have a partnership with Policy Bazaar, a car insurance company, to provide the in-garage car wash services for their customers that come to our garages in Abu Dhabi, Dubai & Ajman.
+
+    ## Why Choose MySyara for Car Wash?
+        - 100% mobile - we come to you.
+        - Eco-conscious solutions with zero water runoff.
+        - Affordable pricing tailored to your car type and location.
+        - Easy booking & payment via mobile app or website with status tracking.
+
+    ## Pricing and details for each car wash and clean service by car type:
+        1. Exterior Wash:
+            Details: waterless wash for the car's exterior
+            Pricing:
+                Compact/Sedan Dirham 40, 
+                Coupe/SUV/Exotic Dirham 45; Eco-friendly
+
+            Add-ons (Can be opted with Exterior Wash Service):
+                - Interior Cleaning: 
+                    Details: A deep clean vacuum treatment for your car’s interior. We also do a bonus virus & bacterial disinfection of your sensitive interior surfaces.
+                    Pricing:
+                        Compact/Sedan Dirham 25, 
+                        Coupe/SUV/Exotic Dirham 30
+
+                - X Dirty Car Wash: 
+                    Details: Car more dirty than usual? Been Offroad? Parked for a long time? Your car needs extra care and time to make sure we offer you the same great results.
+                    Pricing:
+                        Compact/Sedan Dirham 30, 
+                        Coupe/SUV/Exotic Dirham 40
+
+                - Wax Whiz Coating: 
+                    Details: WaxWhiz, a premium protective coating, enhances shine, repels water, and guards against contaminants for lasting durability. With advanced micro-polishing technology, it provides an extended high-gloss shine, removing swirl marks and revealing the true, rich color of your auto paint. Elevate your vehicle's appearance effortlessly.
+                    Pricing:
+                        Compact/Sedan Dirham 135, 
+                        Coupe/SUV/Exotic Dirham 145
+                        
+                - Instant Cera Mix:
+                    Details: Cuts Dirt, Grime, and Grease. Our quick coat Insta Ceramix sealant eliminates dirt, grime & grease instantly. Our signature 3-in-1 formula gives you a waterless car wash, coat and shine for a clean, showcase look.
+                    Pricing:
+                        Compact/Sedan Dirham 115, 
+                        Coupe/SUV/Exotic Dirham 125 
+
+                - Quick Shine:
+                    Details: The ultimate MySyara courtesy, our special liquid polish, makes your car shimmer, shine and sparkle. It also protects the paint from degrading.
+                    Pricing:
+                        Compact/Sedan Dirham 35, 
+                        Coupe/SUV/Exotic Dirham 45
+
+                - Engine Detailing: 
+                    Details: Professional degreasing of your engine's exterior that makes it look as a brand new car!            
+                    Pricing:
+                        Compact/Sedan Dirham 35, 
+                        Coupe/SUV/Exotic Dirham 35
+
+        2. Interior Care: 
+            Details: Experience a complete interior makeover with our thorough cleaning service. We also do a virus & bacterial disinfection of your sensitive interior surfaces and elevate your driving experience with our perfuming service.
+            Pricing:
+                Compact/Sedan Dirham 75, 
+                Coupe/SUV/Exotic Dirham 85
+
+        ## Restrictions and Note before booking car wash:
+        1. Car should be parked in a private parking area. Washing in RTA public parking is not permitted.
+        2. Considering the well-being of our washers, kindly park the car in an accessible, shaded area if booking between 11am and 4pm during the summer.
+
+    # Monthly Car Wash Subscription
+        Details: MySyara offers a monthly car wash subscription service that provides you with the convenience of regular doorstep car washes at your preferred frequency. This service is designed to keep your vehicle looking its best without the hassle of booking each time. The subscription price is also significantly lower than the regular car wash prices.
+    Customers can choose from various plans based on their car type and desired wash frequency. Customers can also book add-ons at discounted prices. These add-on service(s) will be carried out during the next scheduled wash.
+
+    Monthly Subscription Plans:
+        SUV Packages:
+            - 4 exterior washes, Price is Dirham 115/month
+            - 4 exterior washes + 1 interior clean, Price is Dirham 130/month
+            - 8 exterior washes, Price is Dirham 170/month
+            - 8 exterior washes + 2 interior cleans, Price is Dirham 200/month
+            - 12 exterior washes, Price is Dirham 260/month
+            - 12 exterior washes + 4 interior cleans, Price is Dirham 340/month
+
+        Sedan Packages:
+            - 4 exterior washes, Price is Dirham 95/month
+            - 4 exterior washes + 1 interior clean, Price is Dirham 110/month
+            - 8 exterior washes, Price is Dirham 150/month
+            - 8 exterior washes + 2 interior cleans, Price is Dirham 180/month
+            - 12 exterior washes, Price is Dirham 230/month
+            - 12 exterior washes + 4 interior cleans, Price is Dirham 300/month
