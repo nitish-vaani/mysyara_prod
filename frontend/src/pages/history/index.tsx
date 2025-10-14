@@ -45,16 +45,16 @@
 //     const [loading, setLoading] = useState<boolean>(false);
 //     const [list, setList] = useState<CallRecord[]>([]);
 //     const [filteredList, setFilteredList] = useState<CallRecord[]>([]);
-    
+
 //     // Audio states - but with error handling
 //     const [audioLoading, setAudioLoading] = useState<boolean>(false);
 //     const [audioSrc, setAudioSrc] = useState<string|undefined>();
 //     const [audioError, setAudioError] = useState<string | null>(null);
-    
+
 //     const [sideBarData, setSideBarData] = useState<any>();
 //     const [detailsLoading, setDetailsLoading] = useState<boolean>(false);
 //     const [conversationEval, setConversationEval] = useState<any>(null);
-    
+
 //     // Filter states
 //     const [selectedRecords, setSelectedRecords] = useState<CallRecord[]>([]);
 //     const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -91,10 +91,10 @@
 //             try {
 //                 setAudioLoading(true);
 //                 setAudioError(null);
-                
+
 //                 const url: string = sideBarData.recording_api;   
 //                 const response = await fetch(url);
-                
+
 //                 if (!response.ok) {
 //                     // Handle different error types
 //                     if (response.status === 404) {
@@ -108,17 +108,17 @@
 //                 }
 
 //                 const audioBlob = await response.blob();
-                
+
 //                 // Check if the blob is actually audio content
 //                 if (audioBlob.size === 0) {
 //                     setAudioError("Audio recording is empty");
 //                     return;
 //                 }
-                
+
 //                 const audioUrl = URL.createObjectURL(audioBlob);
 //                 setAudioSrc(audioUrl);
 //                 setAudioError(null);
-                
+
 //             } catch (error) {
 //                 console.error("Error streaming audio:", error);
 //                 setAudioError("Unable to load audio recording");
@@ -227,13 +227,13 @@
 //             transcript: rowData.transcript, 
 //             summary: rowData.summary
 //         });
-        
+
 //         // Reset states
 //         setConversationEval(null);
 //         setAudioError(null);
 //         setAudioSrc(undefined);
 //         setVisible(true);
-        
+
 //         // Extract conversation_id from the recording_api URL
 //         let conversationId = null;
 //         if (rowData.recording_api) {
@@ -241,7 +241,7 @@
 //             conversationId = urlParts[urlParts.length - 1];
 //             console.log("Extracted conversation ID:", conversationId);
 //         }
-        
+
 //         // ALWAYS fetch call details regardless of audio availability
 //         if (conversationId) {
 //             try {
@@ -249,7 +249,7 @@
 //                 if (user_id) {
 //                     setDetailsLoading(true);
 //                     const response = await getCallDetails(user_id, conversationId);
-                    
+
 //                     if (response.status <= 299 && response.data) {
 //                         // Process conversation eval data
 //                         if (response.data.conversation_eval) {
@@ -257,7 +257,7 @@
 //                         } else {
 //                             setConversationEval(null);
 //                         }
-                        
+
 //                         // Update sidebar data with fresh transcript/summary if available
 //                         // setSideBarData(prev => ({
 //                         //     ...prev,
@@ -322,14 +322,14 @@
 //                 `"${record.call_status || ''}"`
 //             ].join(','))
 //         ].join('\n');
-        
+
 //         return csvContent;
 //     };
 
 //     // Download CSV
 //     const downloadCSV = () => {
 //         const dataToExport = selectedRecords.length > 0 ? selectedRecords : filteredList;
-        
+
 //         if (dataToExport.length === 0) {
 //             show("No data to export", "info");
 //             return;
@@ -338,7 +338,7 @@
 //         const csvContent = convertToCSV(dataToExport);
 //         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
 //         const link = document.createElement('a');
-        
+
 //         if (link.download !== undefined) {
 //             const url = URL.createObjectURL(blob);
 //             link.setAttribute('href', url);
@@ -348,7 +348,7 @@
 //             link.click();
 //             document.body.removeChild(link);
 //         }
-        
+
 //         show(`Exported ${dataToExport.length} records`, "success");
 //     };
 
@@ -364,7 +364,7 @@
 //                         size="small"
 //                         outlined
 //                     />
-                    
+
 //                     {(searchText || startDate || endDate || selectedStatus || selectedDirection) && (
 //                         <Button
 //                             label="Clear All"
@@ -377,7 +377,7 @@
 //                         />
 //                     )}
 //                 </div>
-                
+
 //                 <div className="selection-info">
 //                     {selectedRecords.length > 0 && (
 //                         <span className="selected-count">
@@ -388,7 +388,7 @@
 //                         Showing {filteredList.length} of {list.length} records
 //                     </span>
 //                 </div>
-                
+
 //                 <Button
 //                     label={selectedRecords.length > 0 ? `Download Selected (${selectedRecords.length})` : `Download All (${filteredList.length})`}
 //                     icon="pi pi-download"
@@ -397,7 +397,7 @@
 //                     disabled={filteredList.length === 0}
 //                 />
 //             </div>
-            
+
 //             {showFilters && (
 //                 <div className="filter-section">
 //                     <div className="filter-row">
@@ -410,7 +410,7 @@
 //                                 className="search-input"
 //                             />
 //                         </div>
-                        
+
 //                         <div className="filter-item">
 //                             <label>From Date:</label>
 //                             <Calendar
@@ -421,7 +421,7 @@
 //                                 showIcon
 //                             />
 //                         </div>
-                        
+
 //                         <div className="filter-item">
 //                             <label>To Date:</label>
 //                             <Calendar
@@ -433,7 +433,7 @@
 //                             />
 //                         </div>
 //                     </div>
-                    
+
 //                     <div className="filter-row">
 //                         <div className="filter-item">
 //                             <label>Status:</label>
@@ -445,7 +445,7 @@
 //                                 className="status-dropdown"
 //                             />
 //                         </div>
-                        
+
 //                         <div className="filter-item">
 //                             <label>Type:</label>
 //                             <Dropdown
@@ -456,7 +456,7 @@
 //                                 className="direction-dropdown"
 //                             />
 //                         </div>
-                        
+
 //                         <div className="filter-spacer"></div>
 //                     </div>
 //                 </div>
@@ -497,7 +497,7 @@
 //                     <Column body={lockTemplate} header="Details"></Column>
 //                 </DataTable>
 //             </div>
-            
+
 //             <Sidebar 
 //                 visible={visible} 
 //                 onHide={() => setVisible(false)}
@@ -515,19 +515,19 @@
 //                                 <p>Loading audio...</p>
 //                             </div>
 //                         )}
-                        
+
 //                         {audioError && (
 //                             <div className="audio-error">
 //                                 <i className="pi pi-exclamation-triangle" style={{color: '#ff9800', marginRight: '8px'}}></i>
 //                                 <span style={{color: '#666', fontStyle: 'italic'}}>{audioError}</span>
 //                             </div>
 //                         )}
-                        
+
 //                         {audioSrc && !audioError && (
 //                             <audio crossOrigin='anonymous' controls src={audioSrc} style={{width: '100%'}}></audio>
 //                         )}
 //                     </div>
-                    
+
 //                     {/* Transcript Section - ALWAYS shows */}
 //                     <div className='transcript'>
 //                         <h3>Transcript</h3>
@@ -535,7 +535,7 @@
 //                             <pre>{sideBarData?.transcript || "Transcript not available"}</pre>  
 //                         </p>
 //                     </div>
-                    
+
 //                     {/* Summary Section - ALWAYS shows */}
 //                     <div className='summary'>
 //                         <h3>Summary</h3>
@@ -543,7 +543,7 @@
 //                             {sideBarData?.summary || "Summary not available"}
 //                         </p>
 //                     </div>
-                    
+
 //                     {/* Conversation Evaluation - ALWAYS shows */}
 //                     {detailsLoading ? (
 //                         <div className="details-loading">
@@ -583,10 +583,10 @@ import EntityExtraction from '../../components/entity-extraction';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
-import { Dropdown } from 'primereact/dropdown';
+// import { Dropdown } from 'primereact/dropdown';
 
 interface HistoryProps {
-  // Add any props here if needed - currently none are required
+    // Add any props here if needed - currently none are required
 }
 
 interface CallRecord {
@@ -601,6 +601,8 @@ interface CallRecord {
     recording_api: string;
     transcript: string;
     summary: string;
+    call_success_status: string;
+    model_name: string;
     [key: string]: any;
 }
 
@@ -610,6 +612,8 @@ interface CallDetailsResponse {
     conversation_eval: any;
     summary: string;
 }
+
+
 
 const History: React.FC<HistoryProps> = () => {
     const navigate = useNavigate();
@@ -623,17 +627,17 @@ const History: React.FC<HistoryProps> = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [list, setList] = useState<CallRecord[]>([]);
     const [filteredList, setFilteredList] = useState<CallRecord[]>([]);
-    
+
     // Audio states - but with error handling
     const [audioLoading, setAudioLoading] = useState<boolean>(false);
-    const [audioSrc, setAudioSrc] = useState<string|undefined>();
+    const [audioSrc, setAudioSrc] = useState<string | undefined>();
     const [audioError, setAudioError] = useState<string | null>(null);
-    
+
     const [sideBarData, setSideBarData] = useState<any>();
     const [detailsLoading, setDetailsLoading] = useState<boolean>(false);
     const [conversationEval, setConversationEval] = useState<any>(null);
     const [entityData, setEntityData] = useState<any>(null);
-    
+
     // Filter states
     const [selectedRecords, setSelectedRecords] = useState<CallRecord[]>([]);
     const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -644,20 +648,20 @@ const History: React.FC<HistoryProps> = () => {
     const [selectedDirection, setSelectedDirection] = useState<string>('');
 
     // Filter options
-    const statusOptions = [
-        { label: 'All Status', value: '' },
-        { label: 'Completed', value: 'completed' },
-        { label: 'Failed', value: 'failed' },
-        { label: 'In Progress', value: 'in-progress' },
-        { label: 'Busy', value: 'busy' },
-        { label: 'No Answer', value: 'no-answer' }
-    ];
+    // const statusOptions = [
+    //     { label: 'Completed', value: 'completed' },
+    //     { label: 'Failed', value: 'failed' },
+    //     { label: 'In Progress', value: 'in-progress' },
+    //     { label: 'Busy', value: 'busy' },
+    //     { label: 'No Answer', value: 'no-answer' }
+    // ];
+    //{ label: 'All Status', value: '' }, <- removed this
 
-    const directionOptions = [
-        { label: 'All Types', value: '' },
-        { label: 'Inbound', value: 'inbound' },
-        { label: 'Outbound', value: 'outbound' }
-    ];
+    // const directionOptions = [
+    //     { label: 'All Types', value: '' },
+    //     { label: 'Inbound', value: 'inbound' },
+    //     { label: 'Outbound', value: 'outbound' }
+    // ];
 
     // Modified audio fetching with graceful error handling
     useEffect(() => {
@@ -670,10 +674,10 @@ const History: React.FC<HistoryProps> = () => {
             try {
                 setAudioLoading(true);
                 setAudioError(null);
-                
-                const url: string = sideBarData.recording_api;   
+
+                const url: string = sideBarData.recording_api;
                 const response = await fetch(url);
-                
+
                 if (!response.ok) {
                     // Handle different error types
                     if (response.status === 404) {
@@ -687,17 +691,17 @@ const History: React.FC<HistoryProps> = () => {
                 }
 
                 const audioBlob = await response.blob();
-                
+
                 // Check if the blob is actually audio content
                 if (audioBlob.size === 0) {
                     setAudioError("Audio recording is empty");
                     return;
                 }
-                
+
                 const audioUrl = URL.createObjectURL(audioBlob);
                 setAudioSrc(audioUrl);
                 setAudioError(null);
-                
+
             } catch (error) {
                 console.error("Error streaming audio:", error);
                 setAudioError("Unable to load audio recording");
@@ -727,7 +731,7 @@ const History: React.FC<HistoryProps> = () => {
 
         // Text search filter
         if (searchText) {
-            filtered = filtered.filter(record => 
+            filtered = filtered.filter(record =>
                 record.name?.toLowerCase().includes(searchText.toLowerCase()) ||
                 record.from_number?.includes(searchText) ||
                 record.to_number?.includes(searchText)
@@ -746,14 +750,14 @@ const History: React.FC<HistoryProps> = () => {
 
         // Status filter
         if (selectedStatus) {
-            filtered = filtered.filter(record => 
+            filtered = filtered.filter(record =>
                 record.call_status?.toLowerCase() === selectedStatus.toLowerCase()
             );
         }
 
         // Direction filter
         if (selectedDirection) {
-            filtered = filtered.filter(record => 
+            filtered = filtered.filter(record =>
                 record.direction?.toLowerCase() === selectedDirection.toLowerCase()
             );
         }
@@ -799,21 +803,84 @@ const History: React.FC<HistoryProps> = () => {
         }
     }, []);
 
+    // useEffect(() => {
+    //     const user_id = localStorage.getItem("fullName");
+    //     if (user_id == null) {
+    //         show("please login first");
+    //         navigate(pagePaths.signin);
+    //     } else {
+    //         setLoading(true);
+    //         getCallHistory(user_id).then(async data => {
+    //             console.log(data)
+    //             const calls = data.data.map(({ Name, ...d }: { Name: { name: string }, [key: string]: any }, index: number) => ({
+    //                 ...d,
+    //                 id: `call_${index}`, // Add unique ID
+    //                 name: Name.name,
+    //                 duration_ms: formatDurationMillis(d.duration_ms),
+    //                 End_time: dateTime(d.End_time)
+    //             }));
+
+    //             // Fetch evaluations in parallel
+    //             const callsWithStatus = await Promise.all(
+    //                 calls.map(async (call: CallRecord) => {
+    //                     try {
+    //                         // Extract conversation ID from each call's recording_api
+    //                         let callConversationId = null;
+    //                         if (call.recording_api) {
+    //                             const urlParts = call.recording_api.split('/');
+    //                             callConversationId = urlParts[urlParts.length - 1];
+    //                             console.log("Extracted conversation ID for call:", callConversationId);
+    //                         }
+
+    //                         if (!callConversationId) {
+    //                             return {
+    //                                 ...call,
+    //                                 call_success_status: 'N/A'
+    //                             };
+    //                         }
+
+    //                         console.log("Fetching evaluation for call ID:", callConversationId);
+    //                         const evalRes = await getCallEvaluation(callConversationId);
+    //                         // Adjust key name if backend returns 'call_success_status'
+    //                         const successStatus = evalRes.data.call_success_status || 'N/A';
+    //                         console.log(`Call ID: ${call.id}, Success Status: ${successStatus}`);
+    //                         return {
+    //                             ...call,
+    //                             call_success_status: successStatus
+    //                         };
+    //                     } catch (e) {
+    //                         // On error, fallback to N/A or any error string
+    //                         return {
+    //                             ...call,
+    //                             call_success_status: 'N/A'
+    //                         };
+    //                     }
+    //                 })
+    //             );
+    //             setList(callsWithStatus);
+    //         }).finally(() => {
+    //             setLoading(false);
+    //         });
+    //     }
+    // }, []);
+
+
     const open = async (rowData: any) => {
         // Set sidebar data with available information - ALWAYS show transcript/summary
         setSideBarData({
-            recording_api: rowData.recording_api, 
-            transcript: rowData.transcript, 
+            recording_api: rowData.recording_api,
+            transcript: rowData.transcript,
             summary: rowData.summary
         });
-        
+
         // Reset states
         setConversationEval(null);
         setEntityData(null);
         setAudioError(null);
         setAudioSrc(undefined);
         setVisible(true);
-        
+        setSelectedDirection('inbound');
+
         // Extract conversation_id from the recording_api URL
         let conversationId = null;
         if (rowData.recording_api) {
@@ -821,7 +888,7 @@ const History: React.FC<HistoryProps> = () => {
             conversationId = urlParts[urlParts.length - 1];
             console.log("Extracted conversation ID:", conversationId);
         }
-        
+
         // ALWAYS fetch call details regardless of audio availability
         if (conversationId) {
             try {
@@ -829,24 +896,24 @@ const History: React.FC<HistoryProps> = () => {
                 if (user_id) {
                     setDetailsLoading(true);
                     const response = await getCallDetails(user_id, conversationId);
-                    
+
                     if (response.status <= 299 && response.data) {
                         const callDetails: CallDetailsResponse = response.data;
-                        
+
                         // Process conversation eval data
                         if (callDetails.conversation_eval) {
                             setConversationEval(callDetails.conversation_eval);
                         } else {
                             setConversationEval(null);
                         }
-                        
+
                         // Process entity data
                         if (callDetails.entity) {
                             setEntityData(callDetails.entity);
                         } else {
                             setEntityData(null);
                         }
-                        
+
                         // Update sidebar data with fresh transcript/summary if available
                         setSideBarData((prev: any) => ({
                             ...prev,
@@ -895,27 +962,26 @@ const History: React.FC<HistoryProps> = () => {
 
     // Convert data to CSV format
     const convertToCSV = (data: CallRecord[]) => {
-        const headers = ['Name', 'Time', 'Duration', 'Type', 'From', 'To', 'Call Status'];
+        const headers = ['Time', 'Agent', 'Duration', 'From', "Eval"]//['Name', 'Time', 'Duration', 'Type', 'From', 'To', 'Call Status'];
         const csvContent = [
             headers.join(','),
             ...data.map(record => [
-                `"${record.name || ''}"`,
                 `"${record.End_time || ''}"`,
+                `"${record.model_name || ''}"`,
                 `"${record.duration_ms || ''}"`,
-                `"${record.direction || ''}"`,
                 `"${record.from_number || ''}"`,
-                `"${record.to_number || ''}"`,
-                `"${record.call_status || ''}"`
+                `"${record.call_success_status || ''}"`,
+
             ].join(','))
         ].join('\n');
-        
+
         return csvContent;
     };
 
     // Download CSV
     const downloadCSV = () => {
         const dataToExport = selectedRecords.length > 0 ? selectedRecords : filteredList;
-        
+
         if (dataToExport.length === 0) {
             show("No data to export", "info");
             return;
@@ -924,7 +990,7 @@ const History: React.FC<HistoryProps> = () => {
         const csvContent = convertToCSV(dataToExport);
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
-        
+
         if (link.download !== undefined) {
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
@@ -934,7 +1000,7 @@ const History: React.FC<HistoryProps> = () => {
             link.click();
             document.body.removeChild(link);
         }
-        
+
         show(`Exported ${dataToExport.length} records`, "success");
     };
 
@@ -950,7 +1016,7 @@ const History: React.FC<HistoryProps> = () => {
                         size="small"
                         outlined
                     />
-                    
+
                     {(searchText || startDate || endDate || selectedStatus || selectedDirection) && (
                         <Button
                             label="Clear All"
@@ -963,7 +1029,7 @@ const History: React.FC<HistoryProps> = () => {
                         />
                     )}
                 </div>
-                
+
                 <div className="selection-info">
                     {selectedRecords.length > 0 && (
                         <span className="selected-count">
@@ -974,7 +1040,7 @@ const History: React.FC<HistoryProps> = () => {
                         Showing {filteredList.length} of {list.length} records
                     </span>
                 </div>
-                
+
                 <Button
                     label={selectedRecords.length > 0 ? `Download Selected (${selectedRecords.length})` : `Download All (${filteredList.length})`}
                     icon="pi pi-download"
@@ -983,7 +1049,7 @@ const History: React.FC<HistoryProps> = () => {
                     disabled={filteredList.length === 0}
                 />
             </div>
-            
+
             {showFilters && (
                 <div className="filter-section">
                     <div className="filter-row">
@@ -996,7 +1062,7 @@ const History: React.FC<HistoryProps> = () => {
                                 className="search-input"
                             />
                         </div>
-                        
+
                         <div className="filter-item">
                             <label>From Date:</label>
                             <Calendar
@@ -1007,7 +1073,7 @@ const History: React.FC<HistoryProps> = () => {
                                 showIcon
                             />
                         </div>
-                        
+
                         <div className="filter-item">
                             <label>To Date:</label>
                             <Calendar
@@ -1019,7 +1085,7 @@ const History: React.FC<HistoryProps> = () => {
                             />
                         </div>
                     </div>
-                    
+{/* 
                     <div className="filter-row">
                         <div className="filter-item">
                             <label>Status:</label>
@@ -1031,7 +1097,7 @@ const History: React.FC<HistoryProps> = () => {
                                 className="status-dropdown"
                             />
                         </div>
-                        
+
                         <div className="filter-item">
                             <label>Type:</label>
                             <Dropdown
@@ -1042,9 +1108,9 @@ const History: React.FC<HistoryProps> = () => {
                                 className="direction-dropdown"
                             />
                         </div>
-                        
+
                         <div className="filter-spacer"></div>
-                    </div>
+                    </div> */}
                 </div>
             )}
         </div>
@@ -1054,12 +1120,12 @@ const History: React.FC<HistoryProps> = () => {
         <div className="history">
             <Toast ref={toast} position="bottom-right" />
             <div className="card">
-                <DataTable 
-                    value={filteredList} 
-                    tableStyle={{ minWidth: '80rem', maxHeight: '100rem', fontSize: '1.5rem' }} 
-                    size='large' 
-                    resizableColumns 
-                    scrollable 
+                <DataTable
+                    value={filteredList}
+                    tableStyle={{ minWidth: '80rem', maxHeight: '100rem', fontSize: '1.5rem' }}
+                    size='large'
+                    resizableColumns
+                    scrollable
                     scrollHeight='65vh'
                     header={header}
                     selection={selectedRecords}
@@ -1073,23 +1139,21 @@ const History: React.FC<HistoryProps> = () => {
                     currentPageReportTemplate="{first} to {last} of {totalRecords}"
                 >
                     <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                    <Column field="name" header="Name" sortable></Column>
                     <Column header="Time" field="End_time" sortable></Column>
+                    <Column header="Agent" field="model_name" sortable></Column>
                     <Column header="Duration" field="duration_ms" sortable></Column>
-                    <Column header="Type" field="direction" sortable></Column>
                     <Column header="From" field="from_number" sortable></Column>
-                    <Column header="To" field="to_number" sortable></Column>
-                    <Column header="Call Status" field="call_status" sortable></Column>
+                    <Column header="Success Status" field="call_success_status" sortable></Column>
                     <Column body={lockTemplate} header="Details"></Column>
                 </DataTable>
             </div>
-            
-            <Sidebar 
-                visible={visible} 
+
+            <Sidebar
+                visible={visible}
                 onHide={() => setVisible(false)}
                 position='right'
                 className='sidebar'
-            > 
+            >
                 <h2>Recording/Transcript</h2>
                 <div className='sidebar-text'>
                     {/* Audio Section - with graceful error handling */}
@@ -1101,27 +1165,27 @@ const History: React.FC<HistoryProps> = () => {
                                 <p>Loading audio...</p>
                             </div>
                         )}
-                        
+
                         {audioError && (
                             <div className="audio-error">
-                                <i className="pi pi-exclamation-triangle" style={{color: '#ff9800', marginRight: '8px'}}></i>
-                                <span style={{color: '#666', fontStyle: 'italic'}}>{audioError}</span>
+                                <i className="pi pi-exclamation-triangle" style={{ color: '#ff9800', marginRight: '8px' }}></i>
+                                <span style={{ color: '#666', fontStyle: 'italic' }}>{audioError}</span>
                             </div>
                         )}
-                        
+
                         {audioSrc && !audioError && (
-                            <audio crossOrigin='anonymous' controls src={audioSrc} style={{width: '100%'}}></audio>
+                            <audio crossOrigin='anonymous' controls src={audioSrc} style={{ width: '100%' }}></audio>
                         )}
                     </div>
-                    
+
                     {/* Transcript Section - ALWAYS shows */}
                     <div className='transcript'>
                         <h3>Transcript</h3>
                         <p>
-                            <pre>{sideBarData?.transcript || "Transcript not available"}</pre>  
+                            <pre>{sideBarData?.transcript || "Transcript not available"}</pre>
                         </p>
                     </div>
-                    
+
                     {/* Summary Section - ALWAYS shows */}
                     <div className='summary'>
                         <h3>Summary</h3>
@@ -1129,7 +1193,7 @@ const History: React.FC<HistoryProps> = () => {
                             {sideBarData?.summary || "Summary not available"}
                         </p>
                     </div>
-                    
+
                     {/* Conversation Evaluation - ALWAYS shows */}
                     {detailsLoading ? (
                         <div className="details-loading">
@@ -1138,7 +1202,7 @@ const History: React.FC<HistoryProps> = () => {
                     ) : (
                         <ConversationEval evalData={conversationEval} />
                     )}
-                    
+
                     {/* Entity Extraction - NEW SECTION */}
                     {detailsLoading ? (
                         <div className="details-loading">
@@ -1155,7 +1219,7 @@ const History: React.FC<HistoryProps> = () => {
                     <MoonLoader size={50} color="black" />
                 </div>
             )}
-        </div> 
+        </div>
     );
 };
 
