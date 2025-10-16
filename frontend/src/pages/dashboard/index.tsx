@@ -64,6 +64,11 @@ const Dashboard: React.FC = () => {
         return `${minutes}m ${seconds}s`;
     };
 
+    function formatDurationMillis(milliseconds: number) {
+        const totalSeconds = Math.floor(milliseconds / 1000);
+        return formatDuration(totalSeconds);
+    }
+
     const formatChartData = (trends: TrendData[]): any[] => {
         return trends.map(trend => ({
             ...trend,
@@ -141,7 +146,7 @@ const Dashboard: React.FC = () => {
                         <i className="pi pi-clock"></i>
                         Avg Call Duration
                     </h3>
-                    <div className="metric-value">{formatDuration(dashboardData.metrics.avg_call_duration)}</div>
+                    <div className="metric-value">{formatDurationMillis(dashboardData.metrics.avg_call_duration)}</div>
                     <div className="metric-subtitle">Average per call</div>
                 </div>
 
@@ -150,7 +155,7 @@ const Dashboard: React.FC = () => {
                         <i className="pi pi-stopwatch"></i>
                         Total Call Duration
                     </h3>
-                    <div className="metric-value">{formatDuration(dashboardData.metrics.total_call_duration)}</div>
+                    <div className="metric-value">{formatDurationMillis(dashboardData.metrics.total_call_duration)}</div>
                     <div className="metric-subtitle">
                         {period === '1_day' ? 'Today' : 'Last 7 days'}
                     </div>
@@ -223,7 +228,7 @@ const Dashboard: React.FC = () => {
                                         fontSize: '14px'
                                     }}
                                     labelFormatter={(label) => period === '1_day' ? `Time: ${label}` : `Date: ${label}`}
-                                    formatter={(value: any) => [formatDuration(value), 'Duration']}
+                                    formatter={(value: any) => [formatDurationMillis(value), 'Duration']}
                                 />
                                 <Legend />
                                 <Bar 
