@@ -55,7 +55,7 @@ logger = logging.getLogger("api")
 
 app = FastAPI(title="LiveKit Dispatch API with Dashboard") 
 open_ai_api = os.getenv("OPENAI_API_KEY")
-BASE_URL = "https://mysyara-prod-bk.vaaniresearch.com"
+BASE_URL = os.getenv("BASE_URL", "https://vaani-chat-bk.vaaniresearch.com")
 client_name = os.getenv("CLIENT_NAME")
 print(f"Client Name: {client_name}")
 
@@ -200,7 +200,7 @@ def get_real_dashboard_metrics(db: Session, user_id: int, client: str, period: s
 
         # Get INCOMING calls within the period
         calls_query = db.query(models.Call).filter(
-            models.Call.user_id == 0,
+            models.Call.user_id == user_id,
             models.Call.call_started_at >= start_date,
             models.Call.call_started_at <= end_date,
             models.Call.call_type == "Incoming",
@@ -214,9 +214,11 @@ def get_real_dashboard_metrics(db: Session, user_id: int, client: str, period: s
         
         # Calculate durations
         valid_durations = [call.call_duration for call in calls if call.call_duration and call.call_duration > 0]
+        print(f"valid_durations: {valid_durations}")
         avg_call_duration = round(sum(valid_durations) / len(valid_durations), 1) if valid_durations else 0
+        print(f"avg_call_duration: {avg_call_duration}")
         total_call_duration = round(sum(valid_durations), 1) if valid_durations else 0
-
+        print(f"total_call_duration: {total_call_duration}")
         # Generate trend data
         trends = []
         if period == "1_day":
@@ -586,7 +588,7 @@ async def get_call_history(user_id: int, client_name: str, db: Session = Depends
                 updated_call['call_details'] = f"{BASE_URL}/api/call_details/{client_name}/{user_id}/{call.call_id}"
                 updated_call['call_type'] = call.call_type
                 updated_call['call_status'] = call_status
-                updated_call['from_number'] = call.call_from
+                updated_call['from_number'] = call.call_from.split("-")[1] #call-+912347827823-something
                 updated_call['to_number'] = call.call_to
                 updated_call['direction'] = call.call_type
                 updated_call['duration_ms'] = call.call_duration
@@ -610,6 +612,13 @@ async def get_call_history(user_id: int, client_name: str, db: Session = Depends
                         
                         if isinstance(dt_value, str):
                             try:
+                                # Ensure exactly 6 digits for fractional seconds
+                                if '.' in dt_value:
+                                    date_part, frac_part = dt_value.split('.')
+                                    frac_part = frac_part[:6].ljust(6, '0')  # Truncate or pad fractional seconds to 6 digits
+                                    dt_value = f"{date_part}.{frac_part}"
+
+                                # Parse the datetime with adjusted fractional seconds
                                 return datetime.fromisoformat(dt_value.replace('Z', '+00:00'))
                             except ValueError:
                                 try:
@@ -639,7 +648,7 @@ async def get_call_history(user_id: int, client_name: str, db: Session = Depends
                 updated_call['call_details'] = f"{BASE_URL}/api/call_details/{client_name}/{user_id}/{call.call_id}"
                 updated_call['call_type'] = call.call_type
                 updated_call['call_status'] = call_data_row.call_status if call_data_row.call_status else "NA"
-                updated_call['from_number'] = call.call_from
+                updated_call['from_number'] = call.call_from.split("-")[1]
                 updated_call['to_number'] = call.call_to
                 updated_call['direction'] = call.call_type
                 updated_call['duration_ms'] = duration
