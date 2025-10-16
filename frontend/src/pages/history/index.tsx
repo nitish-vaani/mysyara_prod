@@ -620,7 +620,7 @@ import EntityExtraction from '../../components/entity-extraction';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Calendar } from 'primereact/calendar';
-import { Dropdown } from 'primereact/dropdown';
+// import { Dropdown } from 'primereact/dropdown';
 
 interface HistoryProps {
   // Add any props here if needed - currently none are required
@@ -639,6 +639,7 @@ interface CallRecord {
     recording_api: string;
     transcript: string;
     summary: string;
+    model_name : string;
     [key: string]: any;
 }
 
@@ -684,28 +685,28 @@ const History: React.FC<HistoryProps> = () => {
     const [selectedSuccessStatus, setSelectedSuccessStatus] = useState<string>('');
 
     // Filter options
-    const statusOptions = [
-        { label: 'All Status', value: '' },
-        { label: 'Completed', value: 'completed' },
-        { label: 'Failed', value: 'failed' },
-        { label: 'In Progress', value: 'in-progress' },
-        { label: 'Busy', value: 'busy' },
-        { label: 'No Answer', value: 'no-answer' }
-    ];
+    // const statusOptions = [
+    //     { label: 'All Status', value: '' },
+    //     { label: 'Completed', value: 'completed' },
+    //     { label: 'Failed', value: 'failed' },
+    //     { label: 'In Progress', value: 'in-progress' },
+    //     { label: 'Busy', value: 'busy' },
+    //     { label: 'No Answer', value: 'no-answer' }
+    // ];
 
-    const directionOptions = [
-        { label: 'All Types', value: '' },
-        { label: 'Inbound', value: 'inbound' },
-        { label: 'Outbound', value: 'outbound' }
-    ];
+    // const directionOptions = [
+    //     { label: 'All Types', value: '' },
+    //     { label: 'Inbound', value: 'inbound' },
+    //     { label: 'Outbound', value: 'outbound' }
+    // ];
 
-    const successStatusOptions = [
-        { label: 'All Status', value: '' },
-        { label: 'Success', value: 'Success' },
-        { label: 'Failure', value: 'Failure' },
-        { label: 'Undetermined', value: 'Undetermined' },
-        { label: 'Pending', value: 'Pending' }
-    ];
+    // const successStatusOptions = [
+    //     { label: 'All Status', value: '' },
+    //     { label: 'Success', value: 'Success' },
+    //     { label: 'Failure', value: 'Failure' },
+    //     { label: 'Undetermined', value: 'Undetermined' },
+    //     { label: 'Pending', value: 'Pending' }
+    // ];
 
     // Modified audio fetching with graceful error handling
     useEffect(() => {
@@ -984,17 +985,14 @@ const History: React.FC<HistoryProps> = () => {
 
     // Convert data to CSV format
     const convertToCSV = (data: CallRecord[]) => {
-        const headers = ['Name', 'Time', 'Duration', 'Type', 'From', 'To', 'Call Status', 'Success Status'];
+        const headers = ['Time', 'Duration', 'Agent', 'From', 'Success Status'];
         const csvContent = [
             headers.join(','),
             ...data.map(record => [
-                `"${record.name || ''}"`,
                 `"${record.End_time || ''}"`,
                 `"${record.duration_ms || ''}"`,
-                `"${record.direction || ''}"`,
+                `"${record.model_name || ''}"`,
                 `"${record.from_number || ''}"`,
-                `"${record.to_number || ''}"`,
-                `"${record.call_status || ''}"`,
                 `"${record.call_success_status || 'Pending'}"`
             ].join(','))
         ].join('\n');
@@ -1041,7 +1039,7 @@ const History: React.FC<HistoryProps> = () => {
                         outlined
                     />
                     
-                    {(searchText || startDate || endDate || selectedStatus || selectedDirection || selectedSuccessStatus) && (
+                    {(searchText || startDate || endDate /*|| selectedStatus || selectedDirection || selectedSuccessStatus*/ ) && (
                         <Button
                             label="Clear All"
                             icon="pi pi-times"
@@ -1110,6 +1108,7 @@ const History: React.FC<HistoryProps> = () => {
                         </div>
                     </div>
                     
+                    {/*
                     <div className="filter-row">
                         <div className="filter-item">
                             <label>Call Status:</label>
@@ -1144,6 +1143,7 @@ const History: React.FC<HistoryProps> = () => {
                             />
                         </div>
                     </div>
+                    */}
                 </div>
             )}
         </div>
@@ -1172,13 +1172,10 @@ const History: React.FC<HistoryProps> = () => {
                     currentPageReportTemplate="{first} to {last} of {totalRecords}"
                 >
                     <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                    <Column field="name" header="Name" sortable></Column>
                     <Column header="Time" field="End_time" sortable></Column>
                     <Column header="Duration" field="duration_ms" sortable></Column>
-                    <Column header="Type" field="direction" sortable></Column>
+                    <Column header="Agent" field="model_name" sortable></Column>
                     <Column header="From" field="from_number" sortable></Column>
-                    <Column header="To" field="to_number" sortable></Column>
-                    <Column header="Call Status" field="call_status" sortable></Column>
                     <Column body={successStatusTemplate} header="Success Status" sortable field="call_success_status"></Column>
                     <Column body={lockTemplate} header="Details"></Column>
                 </DataTable>
