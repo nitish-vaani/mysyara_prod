@@ -525,6 +525,35 @@ def get_all_calls(limit: int = 100, offset: int = 0):
         logger.error(f"Error fetching calls: {e}")
         return []
 
+
+
+def update_call_success_status(room_name: str, success_status: str):
+    """Update the call success evaluation status using SQLAlchemy ORM with retry logic."""
+    
+    def _update_success():
+        from . import models
+        
+        db = SessionLocal()
+        try:
+            call = db.query(models.Call).filter(models.Call.call_id == room_name).first()
+            if not call:
+                logger.error(f"No call found with call_id '{room_name}'.")
+                return False
+            
+            call.call_success_status = success_status
+            call.call_success_evaluated_at = datetime.utcnow()
+            db.commit()
+            logger.info(f"Updated call success status for room '{room_name}' to '{success_status}'.")
+            return True
+        finally:
+            db.close()
+    
+    try:
+        return execute_with_retry(_update_success)
+    except Exception as e:
+        logger.error(f"Failed to update call success status: {e}")
+        return False
+
 # Initialize database with default records on import
 def init_db():
     """Initialize database with default records and fix sequences"""

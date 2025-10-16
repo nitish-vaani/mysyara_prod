@@ -12,6 +12,8 @@ from database.db_test import models
 import os
 from .openai_eval import *
 from database.connectors.s3 import S3Connector
+from database.connectors.azure_conn import BlobConnector
+
 from utils.utility import get_month_year_from_datetime, get_call_duration, current_time, strip_data_func
 from datetime import datetime, timedelta
 from urllib.parse import unquote
@@ -30,6 +32,13 @@ import asyncio
 import json
 import logging
 import random
+from agent.helper.config_manager import config_manager
+
+
+# Load configuration
+config = config_manager.config
+print("*** Loaded Configuration in API ***", "\n"*3)
+print(config)
 
 # Load environment variables
 load_dotenv(dotenv_path="/app/.env.local")
@@ -46,7 +55,7 @@ logger = logging.getLogger("api")
 
 app = FastAPI(title="LiveKit Dispatch API with Dashboard") 
 open_ai_api = os.getenv("OPENAI_API_KEY")
-BASE_URL = "https://lk-backend3.vaaniresearch.com"
+BASE_URL = "https://mysyara-prod-bk.vaaniresearch.com"
 client_name = os.getenv("CLIENT_NAME")
 print(f"Client Name: {client_name}")
 
@@ -544,87 +553,8 @@ async def create_dispatch(fastapi_request: Request, db: Session = Depends(get_da
         logger.error(f"Error creating dispatch: {e}")
         raise HTTPException(status_code=500, detail=f"Error creating dispatch: {str(e)}")
 
-#Data APIs
-# @app.get("/api/call-history/{user_id}/{client_name}")
-# async def get_call_history(user_id: int, client_name: str, db: Session = Depends(get_database)):
-#     try:
-#         import time
-#         start_time_total = time.time()
-#         call_history = db.query(models.Call).filter(models.Call.user_id == 0).all()
-#         print(f"time taken to fetch call history: {time.time() - start_time_total} seconds")
 
-        
-#         curated_response = []
-#         for call in call_history:
-#             updated_call = {}
-#             conversation_id = call.call_id
-            
-#             start_time = time.time()
-#             # call_data_row = get_call_by_room(conversation_id)
-#             call_data_row = call
-            
-#             if call_data_row is None:  # This is to tackle the old data.
-#                 # FIXED: Use call_status instead of call_completed
-#                 if call.call_status == "ended":
-#                     call_status = "ended"
-#                 else:
-#                     call_status = "Ongoing"
-                
-#                 updated_call['Name'] = {'name': call.name}
-#                 updated_call['Start_time'] = call.call_started_at
-#                 updated_call['End_time'] = call.call_ended_at if call.call_ended_at else call.call_started_at
-#                 updated_call['recording_api'] = f"{BASE_URL}/api/stream/{call.call_id}"
-#                 updated_call['call_details'] = f"{BASE_URL}/api/call_details/{client_name}/{user_id}/{call.call_id}"
-#                 updated_call['call_type'] = call.call_type
-#                 updated_call['call_status'] = call_status
-#                 updated_call['from_number'] = call.call_from
-#                 updated_call['to_number'] = call.call_to
-#                 updated_call['direction'] = call.call_type
-#                 updated_call['duration_ms'] = call.call_duration
 
-#             else:
-#                 # Get the duration of the call in ms
-#                 if call_data_row.get('call_ended_at') is None and call_data_row.get('call_status') in ["started", "Call rejected", "Not picked"]:
-#                     duration = 0
-#                 else:
-#                     started_at_str = call_data_row.get('call_started_at')
-#                     ended_at_str = call_data_row.get('call_ended_at')
-
-#                     if started_at_str and ended_at_str:
-#                         started_at = datetime.fromisoformat(started_at_str)
-#                         ended_at = datetime.fromisoformat(ended_at_str)
-#                         duration = (ended_at - started_at).total_seconds() * 1000  # duration in milliseconds
-#                     else:
-#                         duration = 0
-
-#                 updated_call['Name'] = {'name': call.name}
-#                 updated_call['Start_time'] = call_data_row.get('started_at')
-#                 updated_call['End_time'] = call_data_row.get('ended_at', call.call_started_at)
-#                 updated_call['recording_api'] = f"{BASE_URL}/api/stream/{call.call_id}"
-#                 updated_call['call_details'] = f"{BASE_URL}/api/call_details/{client_name}/{user_id}/{call.call_id}"
-#                 updated_call['call_type'] = call.call_type
-#                 updated_call['call_status'] = call_data_row.get('call_status', 'Unknown')
-#                 updated_call['from_number'] = call.call_from
-#                 updated_call['to_number'] = call.call_to
-#                 updated_call['direction'] = call.call_type
-#                 updated_call['duration_ms'] = duration
-            
-        
-#             curated_response.append(updated_call)
-#             print(f"time taken to process each call: {time.time() - start_time} seconds")
-
-#         reversed_list = curated_response[::-1]
-#         time_taken_total = time.time() - start_time_total
-#         print(f"Total time taken to fetch call history: {time_taken_total} seconds")
-#         # print(f"Reversed list: {reversed_list}")
-#         return reversed_list
-        
-#     except (OperationalError, DisconnectionError) as e:
-#         logger.warning(f"Database connection issue in get_call_history: {e}")
-#         raise HTTPException(status_code=503, detail="Database connection issue, please try again")
-#     except Exception as e:
-#         logger.error(f"Error fetching call history: {e}")
-#         raise HTTPException(status_code=500, detail=f"Error fetching call history: {str(e)}")
 
 
 @app.get("/api/call-history/{user_id}/{client_name}")
@@ -634,7 +564,7 @@ async def get_call_history(user_id: int, client_name: str, db: Session = Depends
         from datetime import datetime
         
         start_time_total = time.time()
-        call_history = db.query(models.Call).filter(models.Call.user_id.in_([0, user_id])).all()
+        call_history = db.query(models.Call).filter(models.Call.user_id.in_([user_id])).all()
 
         curated_response = []
         for call in call_history:
@@ -660,6 +590,8 @@ async def get_call_history(user_id: int, client_name: str, db: Session = Depends
                 updated_call['to_number'] = call.call_to
                 updated_call['direction'] = call.call_type
                 updated_call['duration_ms'] = call.call_duration
+                updated_call['call_success_status'] = call.call_success_status if call.call_success_status else "Pending"
+                updated_call['model_name'] = call.model_id
 
             else:
                 # Get the duration of the call in ms
@@ -711,7 +643,9 @@ async def get_call_history(user_id: int, client_name: str, db: Session = Depends
                 updated_call['to_number'] = call.call_to
                 updated_call['direction'] = call.call_type
                 updated_call['duration_ms'] = duration
-            
+                updated_call['call_success_status'] = call_data_row.call_success_status if call_data_row.call_success_status else "Pending"
+                updated_call['model_name'] = call.model_id
+
             curated_response.append(updated_call)
 
         reversed_list = curated_response[::-1]
@@ -724,38 +658,49 @@ async def get_call_history(user_id: int, client_name: str, db: Session = Depends
         logger.error(f"Error fetching call history: {e}")
         raise HTTPException(status_code=500, detail=f"Error fetching call history: {str(e)}")
 
-
 @app.get("/api/transcript/{call_id}")
 async def get_transcript(call_id: str, db: Session = Depends(get_database)):
-    """
-    Retrieve the transcript for a call
-    """
+    """Retrieve the transcript for a call"""
     try:
-        # Find the call
         call = db.query(models.Call).filter(models.Call.call_id == call_id).first()
         if not call:
             raise HTTPException(status_code=404, detail=f"Call with ID {call_id} not found")
         
         status_code = 200
         
+        storage_location = config['store_transcription']['where'].lower()
+
+
         s3_bucket = os.getenv("AWS_BUCKET")
-        print(f"S3 Bucket: {s3_bucket}")
         s3_connector = S3Connector(s3_bucket)
         year, month = get_month_year_from_datetime(str(call.call_started_at))
         transcript_path = f"transcripts/{client_name}/{year}/{month}/{call_id}.txt"
         print(f"Transcript path: {transcript_path}")
             
-        # Get the transcript asynchronously
+
         try:
-            result_transcript = await s3_connector.fetch_file_async(transcript_path)
+            if storage_location == "azure":
+                azure_connector = BlobConnector(os.getenv("AZURE_CONTAINER_NAME"))
+                # print(f"Using Azure Blob Connector: {azure_connector}")
+                result_transcript = await azure_connector.fetch_file_async(transcript_path)
+
+
+            elif storage_location == "s3":
+                s3_bucket = os.getenv("AWS_BUCKET")
+                s3_connector = S3Connector(s3_bucket)
+                print(f"Using S3 Connector: {s3_connector}")
+                result_transcript = await s3_connector.fetch_file_async(transcript_path)
+
+
+            else:
+                raise ValueError(f"Unsupported storage location: {storage_location}")
+
             transcript_bytes = result_transcript if result_transcript is not None else None
-            
+
             if transcript_bytes is None:
-                transcript_content = "Transcript not found in S3"
+                transcript_content = f"Transcript not found in {storage_location.upper()}"
                 status_code = 404
                 call_duration = 0
-            
-            # Convert bytes to string
             else:
                 transcript_cont_ = transcript_bytes.decode('utf-8')
                 if transcript_cont_ == "":
@@ -775,7 +720,7 @@ async def get_transcript(call_id: str, db: Session = Depends(get_database)):
                             if started_at_str and ended_at_str:
                                 started_at = datetime.fromisoformat(started_at_str)
                                 ended_at = datetime.fromisoformat(ended_at_str)
-                                duration = (ended_at - started_at).total_seconds() * 1000  # duration in milliseconds
+                                duration = (ended_at - started_at).total_seconds() * 1000
                             else:
                                 duration = 0
 
@@ -799,73 +744,36 @@ async def get_transcript(call_id: str, db: Session = Depends(get_database)):
     except Exception as e:
         return {"transcript": "Error retrieving transcript", "status_code": 500, "function": "get_transcript(exception)", "error": str(e)}
 
-# @app.get("/api/stream/{call_id}")
-# async def stream_audio(call_id: str, db: Session = Depends(get_database)):
-#     """
-#     Stream audio file from S3
-#     """
-#     try:
-#         # Find the call
-#         call = db.query(models.Call).filter(models.Call.call_id == call_id).first()
-#         if not call:
-#             raise HTTPException(status_code=404, detail=f"Call with ID {call_id} not found")
-        
-#         # Construct the recording path based on your pattern
-#         recording_path = f"{call_id}.mp3"
-        
-#         # Get S3 bucket
-#         s3_bucket = os.getenv("AWS_BUCKET")
-#         print(f"S3 Bucket: {s3_bucket}")
-#         s3_connector = S3Connector(s3_bucket)
-        
-#         # Get the audio file asynchronously
-#         path_of_recording = f"mp3/{recording_path}"
-#         audio_bytes = await s3_connector.fetch_file_async(path_of_recording)
-#         print(f"Audio bytes fetched: {audio_bytes is not None}")
 
-#         if audio_bytes is None:
-#             print(f"Audio file not found in S3 for call_id: {call_id}")
-#             raise HTTPException(status_code=404, detail="Audio file not found in S3")
-        
-#         # Create an async generator to stream the content
-#         async def stream_audio_content():
-#             yield audio_bytes
-        
-#         # Set content type for M3U8 or MP3
-#         if recording_path.endswith(".m3u8"):
-#             content_type = "application/vnd.apple.mpegurl"
-#         elif recording_path.endswith(".mp3"):
-#             content_type = "audio/mpeg"
-#         else:
-#             raise HTTPException(status_code=400, detail="Unsupported file type")
-        
-#         return StreamingResponse(
-#             stream_audio_content(),
-#             media_type=content_type
-#         )
-    
-#     except HTTPException:
-#         raise  # Re-raise HTTP exceptions as-is
-#     except (OperationalError, DisconnectionError) as e:
-#         logger.warning(f"Database connection issue in stream_audio: {e}")
-#         raise HTTPException(status_code=503, detail="Database connection issue, please try again")
-#     except Exception as e:
-#         logger.error(f"Error streaming audio: {e}")
-#         raise HTTPException(status_code=500, detail=f"Error streaming audio: {str(e)}")
 
 @app.get("/api/stream/{call_id}")
-async def stream_audio(call_id: str):  # Remove db dependency
-    """
-    Stream audio file from S3
-    """
+async def stream_audio(call_id: str):
+    """Stream audio file from S3"""
     try:
-        s3_bucket = os.getenv("AWS_BUCKET")
-        if not s3_bucket:
-            raise HTTPException(status_code=404, detail="Audio storage not configured")
-            
-        s3_connector = S3Connector(s3_bucket)
+        # print "where" from "loaded config"
+        print(f"{'*'*20}\n")
+        storage_location = config['store_transcription']['where'].lower()
+        print(f"where: {config['store_transcription']['where']}")
+        print(f"{'*'*20}\n")
+        
         path_of_recording = f"mp3/{call_id}.mp3"
-        audio_bytes = await s3_connector.fetch_file_async(path_of_recording)
+        audio_bytes = None
+
+        if storage_location == "azure":
+            azure_connector = BlobConnector(os.getenv("AZURE_CONTAINER_NAME"))
+            print(f"Using Azure Blob Connector: {azure_connector}")
+            audio_bytes = await azure_connector.fetch_file_async(path_of_recording)
+
+        elif storage_location == "s3":
+            s3_bucket = os.getenv("AWS_BUCKET")
+            if not s3_bucket:
+                raise HTTPException(status_code=404, detail="Audio storage not configured")
+            s3_connector = S3Connector(s3_bucket)
+            print(f"Using S3 Connector: {s3_connector}")
+            audio_bytes = await s3_connector.fetch_file_async(path_of_recording)
+
+        else:
+            raise HTTPException(status_code=500, detail=f"Unsupported storage location: {storage_location}")
 
         if audio_bytes is None:
             raise HTTPException(status_code=404, detail="Audio file not found")
@@ -884,17 +792,20 @@ async def stream_audio(call_id: str):  # Remove db dependency
         logger.error(f"Error streaming audio: {e}")
         raise HTTPException(status_code=500, detail=f"Error streaming audio: {str(e)}")
 
+
+
 @app.get("/api/call_details/{client}/{user_id}/{call_id}")
 async def get_call_details(client: str, user_id: str, call_id: str, db: Session = Depends(get_database)):
+    user_id = int(user_id)  # Ensure user_id is an integer
     try:
         # Step 1: Verify Call ownership - FIXED: Updated join syntax
         call_record = (
             db.query(models.Call)
             .join(models.Model, models.Model.model_id == models.Call.model_id)
             .filter(
-                models.Call.user_id == user_id,
+                models.Call.user_id == int(user_id),
                 models.Call.call_id == call_id,
-                models.Model.client_name == client.upper()
+                # models.Model.client_name == client.upper()
             )
             .first()
         )
@@ -908,7 +819,8 @@ async def get_call_details(client: str, user_id: str, call_id: str, db: Session 
                 "transcription": "Waiting for Transcription to be available. Please try again after the call is over.",
                 'entity': "Waiting for Transcription to be available. Please try again after the call is over.",
                 "conversation_eval": "Waiting for Transcription to be available. Please try again after the call is over.",
-                "summary": "Waiting for Transcription to be available. Please try again after the call is over."
+                "summary": "Waiting for Transcription to be available. Please try again after the call is over.",
+                "success_status": call_record.call_success_status if call_record.call_success_status else "Pending"
             })
         
         elif transcription_val['transcript'] in ['Error fetching transcript', 'Transcript not found in S3', "Transcript is empty"]:
@@ -916,7 +828,8 @@ async def get_call_details(client: str, user_id: str, call_id: str, db: Session 
                 "transcription": "Transcript is not available for further evaluations.",
                 'entity': "Transcript is not available for further evaluations.",
                 "conversation_eval": "Transcript is not available for further evaluations.",
-                "summary": "Transcript is not available for further evaluations."
+                "summary": "Transcript is not available for further evaluations.",
+                "success_status": call_record.call_success_status if call_record.call_success_status else "Pending"
             })
 
         transcription_ = transcription_val['transcript']
@@ -965,7 +878,8 @@ async def get_call_details(client: str, user_id: str, call_id: str, db: Session 
                 "transcription": transcription_,
                 'entity': entity_extraction,
                 "conversation_eval": conversation_eva,
-                "summary": summary
+                "summary": summary,
+                "success_status": call_record.call_success_status if call_record.call_success_status else "Pending"
             })
         
         if extractor_func is None:
@@ -1013,7 +927,8 @@ async def get_call_details(client: str, user_id: str, call_id: str, db: Session 
             "transcription": transcription_,
             'entity': entity_extraction,
             "conversation_eval": conversation_eva,
-            "summary": summary
+            "summary": summary,
+            "success_status": call_record.call_success_status if call_record.call_success_status else "Pending"
         })
 
     except HTTPException:
@@ -1024,6 +939,8 @@ async def get_call_details(client: str, user_id: str, call_id: str, db: Session 
     except Exception as e:
         logger.error(f"Error getting call details: {e}")
         raise HTTPException(status_code=500, detail=f"Error getting call details: {str(e)}")
+
+
 
 #Model APIs
 @app.post("/api/models/")

@@ -9,6 +9,7 @@
 // import { pagePaths } from '../../common/constants';
 // import { MoonLoader, ScaleLoader } from 'react-spinners';
 // import ConversationEval from '../../components/conversation-eval';
+// import EntityExtraction from '../../components/entity-extraction';
 // import { Button } from 'primereact/button';
 // import { InputText } from 'primereact/inputtext';
 // import { Calendar } from 'primereact/calendar';
@@ -33,6 +34,13 @@
 //     [key: string]: any;
 // }
 
+// interface CallDetailsResponse {
+//     transcription: string;
+//     entity: any;
+//     conversation_eval: any;
+//     summary: string;
+// }
+
 // const History: React.FC<HistoryProps> = () => {
 //     const navigate = useNavigate();
 //     const toast = useRef<Toast>(null);
@@ -50,10 +58,12 @@
 //     const [audioLoading, setAudioLoading] = useState<boolean>(false);
 //     const [audioSrc, setAudioSrc] = useState<string|undefined>();
 //     const [audioError, setAudioError] = useState<string | null>(null);
+//     const [selectedSuccessStatus, setSelectedSuccessStatus] = useState<string>('');
     
 //     const [sideBarData, setSideBarData] = useState<any>();
 //     const [detailsLoading, setDetailsLoading] = useState<boolean>(false);
 //     const [conversationEval, setConversationEval] = useState<any>(null);
+//     const [entityData, setEntityData] = useState<any>(null);
     
 //     // Filter states
 //     const [selectedRecords, setSelectedRecords] = useState<CallRecord[]>([]);
@@ -79,6 +89,16 @@
 //         { label: 'Inbound', value: 'inbound' },
 //         { label: 'Outbound', value: 'outbound' }
 //     ];
+
+
+//     const successStatusOptions = [
+//     { label: 'All Status', value: '' },
+//     { label: 'Success', value: 'Success' },
+//     { label: 'Failure', value: 'Failure' },
+//     { label: 'Undetermined', value: 'Undetermined' },
+//     { label: 'Pending', value: 'Pending' }
+//     ];
+
 
 //     // Modified audio fetching with graceful error handling
 //     useEffect(() => {
@@ -230,6 +250,7 @@
         
 //         // Reset states
 //         setConversationEval(null);
+//         setEntityData(null);
 //         setAudioError(null);
 //         setAudioSrc(undefined);
 //         setVisible(true);
@@ -251,32 +272,38 @@
 //                     const response = await getCallDetails(user_id, conversationId);
                     
 //                     if (response.status <= 299 && response.data) {
+//                         const callDetails: CallDetailsResponse = response.data;
+                        
 //                         // Process conversation eval data
-//                         if (response.data.conversation_eval) {
-//                             setConversationEval(response.data.conversation_eval);
+//                         if (callDetails.conversation_eval) {
+//                             setConversationEval(callDetails.conversation_eval);
 //                         } else {
 //                             setConversationEval(null);
 //                         }
                         
+//                         // Process entity data
+//                         if (callDetails.entity) {
+//                             setEntityData(callDetails.entity);
+//                         } else {
+//                             setEntityData(null);
+//                         }
+                        
 //                         // Update sidebar data with fresh transcript/summary if available
-//                         // setSideBarData(prev => ({
-//                         //     ...prev,
-//                         //     transcript: response.data.transcription || prev.transcript,
-//                         //     summary: response.data.summary || prev.summary
-//                         // }));
 //                         setSideBarData((prev: any) => ({
-//                         ...prev,
-//                         transcript: response.data.transcription || prev?.transcript,
-//                         summary: response.data.summary || prev?.summary
-//                     }));
+//                             ...prev,
+//                             transcript: callDetails.transcription || prev?.transcript,
+//                             summary: callDetails.summary || prev?.summary
+//                         }));
 //                     } else {
 //                         setConversationEval(null);
+//                         setEntityData(null);
 //                     }
 //                 }
 //             } catch (error) {
 //                 console.error("Error fetching call details:", error);
-//                 show("Error fetching conversation evaluation", "info");
+//                 show("Error fetching call details", "info");
 //                 setConversationEval(null);
+//                 setEntityData(null);
 //             } finally {
 //                 setDetailsLoading(false);
 //             }
@@ -504,7 +531,7 @@
 //                 position='right'
 //                 className='sidebar'
 //             > 
-//                 <h2>Call Details</h2>
+//                 <h2>Recording/Transcript</h2>
 //                 <div className='sidebar-text'>
 //                     {/* Audio Section - with graceful error handling */}
 //                     <div className='audio-section'>
@@ -552,6 +579,15 @@
 //                     ) : (
 //                         <ConversationEval evalData={conversationEval} />
 //                     )}
+                    
+//                     {/* Entity Extraction - NEW SECTION */}
+//                     {detailsLoading ? (
+//                         <div className="details-loading">
+//                             <ScaleLoader height={20} width={2} radius={5} margin={2} color="#979797" />
+//                         </div>
+//                     ) : (
+//                         <EntityExtraction entities={entityData} />
+//                     )}
 //                 </div>
 //             </Sidebar>
 
@@ -565,6 +601,7 @@
 // };
 
 // export default History;
+
 
 
 
@@ -598,6 +635,7 @@ interface CallRecord {
     from_number: string;
     to_number: string;
     call_status: string;
+    call_success_status?: string;
     recording_api: string;
     transcript: string;
     summary: string;
@@ -609,6 +647,7 @@ interface CallDetailsResponse {
     entity: any;
     conversation_eval: any;
     summary: string;
+    success_status: string;
 }
 
 const History: React.FC<HistoryProps> = () => {
@@ -642,6 +681,7 @@ const History: React.FC<HistoryProps> = () => {
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [selectedStatus, setSelectedStatus] = useState<string>('');
     const [selectedDirection, setSelectedDirection] = useState<string>('');
+    const [selectedSuccessStatus, setSelectedSuccessStatus] = useState<string>('');
 
     // Filter options
     const statusOptions = [
@@ -657,6 +697,14 @@ const History: React.FC<HistoryProps> = () => {
         { label: 'All Types', value: '' },
         { label: 'Inbound', value: 'inbound' },
         { label: 'Outbound', value: 'outbound' }
+    ];
+
+    const successStatusOptions = [
+        { label: 'All Status', value: '' },
+        { label: 'Success', value: 'Success' },
+        { label: 'Failure', value: 'Failure' },
+        { label: 'Undetermined', value: 'Undetermined' },
+        { label: 'Pending', value: 'Pending' }
     ];
 
     // Modified audio fetching with graceful error handling
@@ -758,8 +806,15 @@ const History: React.FC<HistoryProps> = () => {
             );
         }
 
+        // Success status filter
+        if (selectedSuccessStatus) {
+            filtered = filtered.filter(record => 
+                record.call_success_status?.toLowerCase() === selectedSuccessStatus.toLowerCase()
+            );
+        }
+
         setFilteredList(filtered);
-    }, [list, searchText, startDate, endDate, selectedStatus, selectedDirection]);
+    }, [list, searchText, startDate, endDate, selectedStatus, selectedDirection, selectedSuccessStatus]);
 
     function formatDuration(seconds: number) {
         const minutes = Math.floor(seconds / 60);
@@ -799,12 +854,44 @@ const History: React.FC<HistoryProps> = () => {
         }
     }, []);
 
+    const successStatusTemplate = (rowData: any) => {
+        const status = rowData.call_success_status || 'Pending';
+        let badgeClass = '';
+        let icon = '';
+        
+        switch(status) {
+            case 'Success':
+                badgeClass = 'status-badge status-success';
+                icon = 'pi-check-circle';
+                break;
+            case 'Failure':
+                badgeClass = 'status-badge status-failure';
+                icon = 'pi-times-circle';
+                break;
+            case 'Undetermined':
+                badgeClass = 'status-badge status-undetermined';
+                icon = 'pi-question-circle';
+                break;
+            default:
+                badgeClass = 'status-badge status-pending';
+                icon = 'pi-clock';
+        }
+        
+        return (
+            <span className={badgeClass}>
+                <i className={`pi ${icon}`}></i>
+                {status}
+            </span>
+        );
+    };
+
     const open = async (rowData: any) => {
         // Set sidebar data with available information - ALWAYS show transcript/summary
         setSideBarData({
             recording_api: rowData.recording_api, 
             transcript: rowData.transcript, 
-            summary: rowData.summary
+            summary: rowData.summary,
+            success_status: rowData.call_success_status
         });
         
         // Reset states
@@ -851,7 +938,8 @@ const History: React.FC<HistoryProps> = () => {
                         setSideBarData((prev: any) => ({
                             ...prev,
                             transcript: callDetails.transcription || prev?.transcript,
-                            summary: callDetails.summary || prev?.summary
+                            summary: callDetails.summary || prev?.summary,
+                            success_status: callDetails.success_status || prev?.success_status
                         }));
                     } else {
                         setConversationEval(null);
@@ -885,6 +973,7 @@ const History: React.FC<HistoryProps> = () => {
         setEndDate(null);
         setSelectedStatus('');
         setSelectedDirection('');
+        setSelectedSuccessStatus('');
         setSelectedRecords([]);
     };
 
@@ -895,7 +984,7 @@ const History: React.FC<HistoryProps> = () => {
 
     // Convert data to CSV format
     const convertToCSV = (data: CallRecord[]) => {
-        const headers = ['Name', 'Time', 'Duration', 'Type', 'From', 'To', 'Call Status'];
+        const headers = ['Name', 'Time', 'Duration', 'Type', 'From', 'To', 'Call Status', 'Success Status'];
         const csvContent = [
             headers.join(','),
             ...data.map(record => [
@@ -905,7 +994,8 @@ const History: React.FC<HistoryProps> = () => {
                 `"${record.direction || ''}"`,
                 `"${record.from_number || ''}"`,
                 `"${record.to_number || ''}"`,
-                `"${record.call_status || ''}"`
+                `"${record.call_status || ''}"`,
+                `"${record.call_success_status || 'Pending'}"`
             ].join(','))
         ].join('\n');
         
@@ -951,7 +1041,7 @@ const History: React.FC<HistoryProps> = () => {
                         outlined
                     />
                     
-                    {(searchText || startDate || endDate || selectedStatus || selectedDirection) && (
+                    {(searchText || startDate || endDate || selectedStatus || selectedDirection || selectedSuccessStatus) && (
                         <Button
                             label="Clear All"
                             icon="pi pi-times"
@@ -1022,7 +1112,7 @@ const History: React.FC<HistoryProps> = () => {
                     
                     <div className="filter-row">
                         <div className="filter-item">
-                            <label>Status:</label>
+                            <label>Call Status:</label>
                             <Dropdown
                                 value={selectedStatus}
                                 options={statusOptions}
@@ -1043,7 +1133,16 @@ const History: React.FC<HistoryProps> = () => {
                             />
                         </div>
                         
-                        <div className="filter-spacer"></div>
+                        <div className="filter-item">
+                            <label>Success Status:</label>
+                            <Dropdown
+                                value={selectedSuccessStatus}
+                                options={successStatusOptions}
+                                onChange={(e) => setSelectedSuccessStatus(e.value)}
+                                placeholder="Select success status"
+                                className="success-status-dropdown"
+                            />
+                        </div>
                     </div>
                 </div>
             )}
@@ -1080,6 +1179,7 @@ const History: React.FC<HistoryProps> = () => {
                     <Column header="From" field="from_number" sortable></Column>
                     <Column header="To" field="to_number" sortable></Column>
                     <Column header="Call Status" field="call_status" sortable></Column>
+                    <Column body={successStatusTemplate} header="Success Status" sortable field="call_success_status"></Column>
                     <Column body={lockTemplate} header="Details"></Column>
                 </DataTable>
             </div>
@@ -1090,8 +1190,16 @@ const History: React.FC<HistoryProps> = () => {
                 position='right'
                 className='sidebar'
             > 
-                <h2>Recording/Transcript</h2>
+                <h2>Call Details</h2>
                 <div className='sidebar-text'>
+                    {/* Success Status Section */}
+                    {sideBarData?.success_status && (
+                        <div className='success-status-section'>
+                            <h3>Call Outcome</h3>
+                            {successStatusTemplate({ call_success_status: sideBarData.success_status })}
+                        </div>
+                    )}
+                    
                     {/* Audio Section - with graceful error handling */}
                     <div className='audio-section'>
                         <h3>Recording</h3>

@@ -4,7 +4,7 @@ record_audio: False
 
 store_transcription:
   switch: True # True, False
-  where: s3 # local, s3, both
+  where: azure # local, s3, both, azure
 
 welcome_msg: True
 use_rag: False

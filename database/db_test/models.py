@@ -71,6 +71,8 @@ class Call(Base):
     call_recording_url = Column(String(500), nullable=True)
     call_conversation_quality = Column(JSON, nullable=True, default=dict)
     call_entity = Column(JSON, nullable=True, default=dict)
+    call_success_status = Column(String(20), nullable=True, default=None)
+    call_success_evaluated_at = Column(DateTime, nullable=True)
 
     # Relationships with proper back references
     model = relationship("Model", back_populates="calls")

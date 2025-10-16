@@ -1,0 +1,42 @@
+[2025-10-14 14:18:20] AGENT: Hi! You've reached MySyara, your trusted car care partner. I am Sam, how can I assist you today?. 
+ interrupted: False
+
+[2025-10-14 14:18:24] USER: Customer service.. 
+ interrupted: False
+
+[2025-10-14 14:18:38] AGENT: If you're looking for help with your car service needs at MySyara, I'm here to assist! Could you please let me know which emirate you are located in? We currently operate in Dubai, Abu Dhabi, Sharjah, and Ajman.. 
+ interrupted: False
+
+[2025-10-14 14:18:42] USER: Dubai.. 
+ interrupted: False
+
+[2025-10-14 14:18:53] AGENT: Great! Since you're in Dubai, we offer a variety of car services, including both doorstep and in-garage car wash options. Are you interested in a specific service today?. 
+ interrupted: False
+
+[2025-10-14 14:18:59] USER: In shop.. 
+ interrupted: False
+
+[2025-10-14 14:19:06] AGENT: Perfect! Could you please let me know your specific location within Dubai? I'll check which garage location would be most convenient for you.. 
+ interrupted: False
+
+[2025-10-14 14:19:10] USER: Umm Ramool.. 
+ interrupted: False
+
+[2025-10-14 14:19:22] AGENT: It looks like we have a garage located right in Umm Ramool, Rashidiya. They offer a wide range of services including car washes. Would you like to go ahead and book a service there?. 
+ interrupted: False
+
+[2025-10-14 14:19:27] USER: Yes.. 
+ interrupted: False
+
+[2025-10-14 14:19:32] AGENT: Alright, let's get that set up for you. Can I have your full name, please?. 
+ interrupted: False
+
+[2025-10-14 14:19:36] USER: I'd like to speak to someone.. 
+ interrupted: False
+
+[2025-10-14 14:19:42] AGENT: Sure. I will transfer your call to one of our human agents.. 
+ interrupted: False
+
+[2025-10-14 14:19:44] AGENT: I've. 
+ interrupted: True
+

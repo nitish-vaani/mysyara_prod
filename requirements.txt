@@ -1,3 +1,4 @@
+azure-storage-blob
 aioboto3==14.1.0
 aiobotocore==2.21.1
 aiofiles==24.1.0

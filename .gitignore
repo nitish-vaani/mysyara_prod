@@ -12,3 +12,6 @@ __pycache__/
 node_modules/
 dist/
 frontend/node_modules/*
+*maqsam_inbound_*.txt
+*s3_to_blob.py
+*one_time_transfer.py

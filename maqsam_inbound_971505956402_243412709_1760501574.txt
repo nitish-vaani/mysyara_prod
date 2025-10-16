@@ -1,0 +1,24 @@
+[2025-10-15 04:13:20] AGENT: Hi! You've reached MySyara, your trusted car care partner. I am Sam, how can I assist you today?. 
+ interrupted: False
+
+[2025-10-15 04:13:25] USER: Good.. 
+ interrupted: False
+
+[2025-10-15 04:13:26] AGENT: I'm. 
+ interrupted: True
+
+[2025-10-15 04:13:26] USER: Would like to wash my car.. 
+ interrupted: False
+
+[2025-10-15 04:13:28] USER: Based on this one policy.. 
+ interrupted: False
+
+[2025-10-15 04:13:40] AGENT: Got it! You're interested in using a Policy Bazaar coupon for a car wash. Could you please let me know which emirate you're located in? We currently operate in Dubai, Abu Dhabi, Sharjah, and Ajman.. 
+ interrupted: False
+
+[2025-10-15 04:13:44] USER: Goodbye.. 
+ interrupted: False
+
+[2025-10-15 04:13:50] AGENT: Have a great day and thank you for choosing MySyara! You can cut the call from your side if there is no query.. 
+ interrupted: False
+

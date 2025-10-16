@@ -1,0 +1,139 @@
+[2025-10-14 18:04:53] AGENT: Hi! You've reached MySyara, your trusted car care partner. I am Sam, how can I assist you today?. 
+ interrupted: False
+
+[2025-10-14 18:04:56] USER: Hello?. 
+ interrupted: False
+
+[2025-10-14 18:04:59] USER: Yes, hi.. 
+ interrupted: False
+
+[2025-10-14 18:05:01] AGENT: Hello,. 
+ interrupted: True
+
+[2025-10-14 18:05:01] USER: Hello.. 
+ interrupted: False
+
+[2025-10-14 18:05:03] AGENT: Hi there!. 
+ interrupted: True
+
+[2025-10-14 18:05:04] USER: Can you hear me?. 
+ interrupted: False
+
+[2025-10-14 18:05:06] AGENT: Yes, I. 
+ interrupted: True
+
+[2025-10-14 18:05:10] USER: I was just seeing one call.. 
+ interrupted: False
+
+[2025-10-14 18:05:17] USER: And I couldn't answer. I I was checking your mobile application, and I was checking the option for voice two minutes.. 
+ interrupted: False
+
+[2025-10-14 18:05:22] USER: And there was one option for instead wire changing, and they asked me for my home address.. 
+ interrupted: False
+
+[2025-10-14 18:05:30] USER: So can you just clarify what that this service? Is this like a delivery home delivery, home service, or what type of service is this?. 
+ interrupted: False
+
+[2025-10-14 18:05:35] AGENT: Got it. It sounds like you might. 
+ interrupted: True
+
+[2025-10-14 18:05:35] USER: Hello?. 
+ interrupted: False
+
+[2025-10-14 18:05:56] AGENT: Hey! It sounds like you might be looking at one of our doorstep services. We offer a range of car care services that can be done right at your location, without you having to go anywhere. If it's related to oil changes or similar services, we can come to you.
+
+Could you let me know which emirate you're located in so I can confirm the specifics for that area?. 
+ interrupted: False
+
+[2025-10-14 18:06:01] USER: Oh, Sharjah is not there.. 
+ interrupted: False
+
+[2025-10-14 18:06:13] AGENT: I see. Just to clarify, you're located in Sharjah, right? It seems like you're referring to a service that's typically offered as a doorstep service, but let me confirm that for you.
+
+Could you let me know which specific service you were interested in?. 
+ interrupted: False
+
+[2025-10-14 18:06:17] USER: Oil change in service. Engine oil.. 
+ interrupted: False
+
+[2025-10-14 18:06:27] AGENT: Alright! So you're interested in an engine oil change service. Since you're in Sharjah, let me check if we provide that service as a doorstep option for you. Hang tight for just a moment!. 
+ interrupted: False
+
+[2025-10-14 18:06:28] USER: Sure.. 
+ interrupted: False
+
+[2025-10-14 18:06:42] AGENT: Great news! We do offer the engine oil change service in Sharjah, and it can be done right at your location. It's part of our doorstep services, so you don't have to worry about going anywhere.
+
+Would you like to proceed with booking this service?. 
+ interrupted: False
+
+[2025-10-14 18:06:46] USER: Yes.. 
+ interrupted: False
+
+[2025-10-14 18:06:53] AGENT: Perfect! Could you please share your specific location within Sharjah? That way, I'll know the best way to arrange the service for you.. 
+ interrupted: False
+
+[2025-10-14 18:06:57] USER: I'm not a Sharjah.. 
+ interrupted: False
+
+[2025-10-14 18:06:59] USER: Abdulati's margin building.. 
+ interrupted: False
+
+[2025-10-14 18:07:02] USER: Block a.. 
+ interrupted: False
+
+[2025-10-14 18:07:10] AGENT: Great, thanks for letting me know! Let me gather a bit more information from you so we can proceed with the booking.
+
+Can I have your full name, please?. 
+ interrupted: False
+
+[2025-10-14 18:07:20] USER: Mahesh Khor,. 
+ interrupted: False
+
+[2025-10-14 18:07:26] AGENT: Thank you, Mahesh! Now, what's the approximate run of your vehicle so far?. 
+ interrupted: False
+
+[2025-10-14 18:07:30] USER: Sorry. I couldn't get you.. 
+ interrupted: False
+
+[2025-10-14 18:07:38] AGENT: No worries! I was just asking about the approximate mileage or run of your vehicle so far. Could you share that with me, please?. 
+ interrupted: False
+
+[2025-10-14 18:07:46] USER: I wanna do oil change for 5,000 kilometer.. 
+ interrupted: False
+
+[2025-10-14 18:07:56] AGENT: Got it, Mahesh. You're looking to do an oil change for a 5,000-kilometer run. 
+
+Let me just confirm everything with you before we proceed. One moment!. 
+ interrupted: False
+
+[2025-10-14 18:08:08] AGENT: Great, thank you! So, it's an oil change after 5,000 kilometers. Lastly, since you're using the same number you're calling from, should we go ahead and use it for your booking? That's nine seven one double five nine. 
+ interrupted: True
+
+[2025-10-14 18:08:09] USER: Yes.. 
+ interrupted: False
+
+[2025-10-14 18:08:33] AGENT: Perfect! We've got your number as nine seven one double five nine one five eight six eight three.
+
+With all that sorted, Mahesh, our team will review your request and get in touch with you on your mobile. We're available from 9 AM to 6 PM. You can also reach us anytime through our app or at doublu, doublu, doublu dot m-y-s-y-a-r-a dot com. 
+
+If you have any more questions or concerns, feel free to ask!. 
+ interrupted: False
+
+[2025-10-14 18:08:39] USER: Thank you. This is confirmed for tomorrow.. 
+ interrupted: False
+
+[2025-10-14 18:08:51] AGENT: Great! While I can't guarantee same-day confirmation online, our team will prioritize your appointment for tomorrow. They'll be in touch soon to finalize everything. 
+
+Is there anything else you need help with today?. 
+ interrupted: True
+
+[2025-10-14 18:08:54] USER: So no. It's okay. Thank you so much.. 
+ interrupted: False
+
+[2025-10-14 18:09:01] AGENT: You're welcome, Mahesh! Have a great day, and thank you for choosing MySyara. You can cut the call from your side. 
+ interrupted: True
+
+[2025-10-14 18:09:02] USER: Thank you.. 
+ interrupted: False
+

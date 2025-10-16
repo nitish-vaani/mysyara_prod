@@ -2,7 +2,7 @@ import axios from "axios"
 import { CreateUserRequest, FeedbackRequest, LoginRequest, TriggerCallRequest, DashboardResponse } from "./types"
 
 // Single base URL for the merged API (running on port 1234)
-axios.defaults.baseURL = `https://lk-backend3.vaaniresearch.com/api`
+axios.defaults.baseURL = `https://mysyara-prod-bk.vaaniresearch.com/api`
 
 const client = "mysyara";
 
