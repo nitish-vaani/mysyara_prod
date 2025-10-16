@@ -119,11 +119,11 @@ const Header = () => {
       icon: "pi pi-chart-bar",
       url: pagePaths.dashboard
     },
-    {
-      label: "Call Test",
-      icon: "pi pi-phone",
-      url: pagePaths.home
-    },
+    // {
+    //   label: "Call Test",
+    //   icon: "pi pi-phone",
+    //   url: pagePaths.home
+    // },
     {
       label: "Call History",
       icon: "pi pi-history",
