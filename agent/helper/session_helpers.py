@@ -26,26 +26,6 @@ def prewarm_session(proc):
         ],
     }
 
-# def create_agent_session(userdata: UserData, config: Dict[str, Any]) -> AgentSession:
-#     """Create and configure an agent session with all required components"""
-#     # Get AI model instances
-#     llm_instance = get_openai_llm()
-#     tts_instance = get_tts(config)
-#     stt_instance = get_stt_instance()
-#     vad_instance = get_vad_instance()
-    
-#     # Create session with all components
-#     session = AgentSession[UserData](
-#         stt=stt_instance,
-#         llm=llm_instance,
-#         tts=tts_instance,
-#         vad=vad_instance,
-#         turn_detection=EnglishModel(),
-#         userdata=userdata
-#     )
-    
-#     logger.info("Agent session created successfully")
-#     return session
 def create_agent_session(userdata: UserData, config: Dict[str, Any], agent_config: Dict[str, Any]=None) -> AgentSession:
     """Create and configure an agent session with all required components"""
     # Get AI model instances

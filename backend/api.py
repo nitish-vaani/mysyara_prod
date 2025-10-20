@@ -184,11 +184,17 @@ class DashboardResponse(BaseModel):
     period: str  # "7_days" or "1_day"
 
 # Dashboard Helper Functions
+
+from datetime import datetime, timedelta, timezone
+from urllib.parse import unquote
+from .extractor_config import *
+
 def get_real_dashboard_metrics(db: Session, user_id: int, client: str, period: str) -> DashboardResponse:
     """Generate real dashboard metrics from database"""
     try:
         # Calculate date range based on period
-        end_date = datetime.now()
+        # Use UTC timezone-aware datetime
+        end_date = datetime.now(timezone.utc)
         if period == "1_day":
             start_date = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
             date_format = "%H:%M"
@@ -196,7 +202,8 @@ def get_real_dashboard_metrics(db: Session, user_id: int, client: str, period: s
             start_date = end_date - timedelta(days=7)
             date_format = "%Y-%m-%d"
 
-        print(f"start_date: {start_date}")
+        print(f"start_date (UTC): {start_date}")
+        print(f"end_date (UTC): {end_date}")
 
         # Get INCOMING calls within the period
         calls_query = db.query(models.Call).filter(
@@ -212,8 +219,27 @@ def get_real_dashboard_metrics(db: Session, user_id: int, client: str, period: s
         # Calculate total metrics
         total_calls = len(calls)
         
-        # Calculate durations
-        valid_durations = [call.call_duration for call in calls if call.call_duration and call.call_duration > 0]
+        # Calculate durations based on start and end times
+        valid_durations = []
+        for call in calls:
+            if call.call_started_at and call.call_ended_at:
+                # Ensure both datetimes are timezone-aware
+                start_time = call.call_started_at
+                end_time = call.call_ended_at
+                
+                # If datetimes are naive, assume they're UTC
+                if start_time.tzinfo is None:
+                    start_time = start_time.replace(tzinfo=timezone.utc)
+                if end_time.tzinfo is None:
+                    end_time = end_time.replace(tzinfo=timezone.utc)
+                
+                # Calculate duration in seconds
+                duration = (end_time - start_time).total_seconds()
+                
+                # Only include positive durations
+                if duration > 0:
+                    valid_durations.append(duration)
+        
         avg_call_duration = round(sum(valid_durations) / len(valid_durations), 1) if valid_durations else 0
         total_call_duration = round(sum(valid_durations), 1) if valid_durations else 0
 
@@ -225,8 +251,30 @@ def get_real_dashboard_metrics(db: Session, user_id: int, client: str, period: s
                 hour_start = start_date + timedelta(hours=hour)
                 hour_end = hour_start + timedelta(hours=1)
                 
-                hour_calls = [call for call in calls if hour_start <= call.call_started_at < hour_end]
-                hour_durations = [call.call_duration for call in hour_calls if call.call_duration and call.call_duration > 0]
+                hour_calls = []
+                hour_durations = []
+                
+                for call in calls:
+                    call_time = call.call_started_at
+                    if call_time.tzinfo is None:
+                        call_time = call_time.replace(tzinfo=timezone.utc)
+                    
+                    if hour_start <= call_time < hour_end:
+                        hour_calls.append(call)
+                        
+                        # Calculate duration for this call
+                        if call.call_started_at and call.call_ended_at:
+                            start_time = call.call_started_at
+                            end_time = call.call_ended_at
+                            
+                            if start_time.tzinfo is None:
+                                start_time = start_time.replace(tzinfo=timezone.utc)
+                            if end_time.tzinfo is None:
+                                end_time = end_time.replace(tzinfo=timezone.utc)
+                            
+                            duration = (end_time - start_time).total_seconds()
+                            if duration > 0:
+                                hour_durations.append(duration)
                 
                 trends.append(TrendData(
                     date=hour_start.strftime(date_format),
@@ -240,8 +288,30 @@ def get_real_dashboard_metrics(db: Session, user_id: int, client: str, period: s
                 day_start = start_date + timedelta(days=i)
                 day_end = day_start + timedelta(days=1)
                 
-                day_calls = [call for call in calls if day_start <= call.call_started_at < day_end]
-                day_durations = [call.call_duration for call in day_calls if call.call_duration and call.call_duration > 0]
+                day_calls = []
+                day_durations = []
+                
+                for call in calls:
+                    call_time = call.call_started_at
+                    if call_time.tzinfo is None:
+                        call_time = call_time.replace(tzinfo=timezone.utc)
+                    
+                    if day_start <= call_time < day_end:
+                        day_calls.append(call)
+                        
+                        # Calculate duration for this call
+                        if call.call_started_at and call.call_ended_at:
+                            start_time = call.call_started_at
+                            end_time = call.call_ended_at
+                            
+                            if start_time.tzinfo is None:
+                                start_time = start_time.replace(tzinfo=timezone.utc)
+                            if end_time.tzinfo is None:
+                                end_time = end_time.replace(tzinfo=timezone.utc)
+                            
+                            duration = (end_time - start_time).total_seconds()
+                            if duration > 0:
+                                day_durations.append(duration)
                 
                 trends.append(TrendData(
                     date=day_start.strftime(date_format),
@@ -266,97 +336,6 @@ def get_real_dashboard_metrics(db: Session, user_id: int, client: str, period: s
     except Exception as e:
         logger.error(f"Error generating dashboard metrics: {e}")
         raise HTTPException(status_code=500, detail=f"Error generating dashboard metrics: {str(e)}")
-
-# def get_real_dashboard_metrics(db: Session, user_id: int, client: str, period: str) -> DashboardResponse:
-#     """Generate real dashboard metrics from database"""
-#     try:
-#         # Calculate date range based on period
-#         end_date = datetime.now()
-#         if period == "1_day":
-#             start_date = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
-#             date_format = "%H:%M"
-#         else:  # 7_days
-#             start_date = end_date - timedelta(days=7)
-#             date_format = "%Y-%m-%d"
-
-#         print(f"start_date: {start_date}")
-
-#         # Get INCOMING calls within the period
-#         calls_query = db.query(models.Call).filter(
-#             models.Call.user_id == 0,
-#             models.Call.call_started_at >= start_date,
-#             models.Call.call_started_at <= end_date,
-#             models.Call.call_type == "Incoming",
-#             models.Call.model_id == "Mysyara Inbound Agent"
-#         )
-
-#         calls = calls_query.all()
-
-#         # Calculate total metrics
-#         total_calls = len(calls)
-        
-#         # Calculate leads (calls with call_entity data)
-#         total_leads = len([call for call in calls if call.call_entity and call.call_entity != {}])
-#         conversion_rate = round((total_leads / total_calls * 100) if total_calls > 0 else 0, 2)
-        
-#         # Calculate durations
-#         valid_durations = [call.call_duration for call in calls if call.call_duration and call.call_duration > 0]
-#         avg_call_duration = round(sum(valid_durations) / len(valid_durations), 1) if valid_durations else 0
-#         total_call_duration = round(sum(valid_durations), 1) if valid_durations else 0
-
-#         # Generate trend data
-#         trends = []
-#         if period == "1_day":
-#             # Group by hour
-#             for hour in range(24):
-#                 hour_start = start_date + timedelta(hours=hour)
-#                 hour_end = hour_start + timedelta(hours=1)
-                
-#                 hour_calls = [call for call in calls if hour_start <= call.call_started_at < hour_end]
-#                 hour_leads = [call for call in hour_calls if call.call_entity and call.call_entity != {}]
-#                 hour_durations = [call.call_duration for call in hour_calls if call.call_duration and call.call_duration > 0]
-                
-#                 trends.append(TrendData(
-#                     date=hour_start.strftime(date_format),
-#                     calls=len(hour_calls),
-#                     leads=len(hour_leads),
-#                     duration=round(sum(hour_durations) / len(hour_durations), 1) if hour_durations else 0
-#                 ))
-#         else:
-#             # Group by day
-#             for i in range(7):
-#                 day_start = start_date + timedelta(days=i)
-#                 day_end = day_start + timedelta(days=1)
-                
-#                 day_calls = [call for call in calls if day_start <= call.call_started_at < day_end]
-#                 day_leads = [call for call in day_calls if call.call_entity and call.call_entity != {}]
-#                 day_durations = [call.call_duration for call in day_calls if call.call_duration and call.call_duration > 0]
-                
-#                 trends.append(TrendData(
-#                     date=day_start.strftime(date_format),
-#                     calls=len(day_calls),
-#                     leads=len(day_leads),
-#                     duration=round(sum(day_durations) / len(day_durations), 1) if day_durations else 0
-#                 ))
-
-#         metrics = DashboardMetrics(
-#             total_calls=total_calls,
-#             total_leads=total_leads,
-#             conversion_rate=conversion_rate,
-#             avg_call_duration=avg_call_duration,
-#             total_call_duration=total_call_duration  # Add this new field
-#         )
-
-#         return DashboardResponse(
-#             metrics=metrics,
-#             call_trends=trends,
-#             lead_trends=trends,
-#             period=period
-#         )
-
-#     except Exception as e:
-#         logger.error(f"Error generating dashboard metrics: {e}")
-#         raise HTTPException(status_code=500, detail=f"Error generating dashboard metrics: {str(e)}")
 
 
 def generate_fallback_dashboard_data(period: str) -> DashboardResponse:

@@ -22,7 +22,7 @@ const SignInForm = () => {
                 localStorage.setItem("isAuth", "true");
                 localStorage.setItem("fullName", user.data.user_id);
                 localStorage.setItem("Name", user.data.user_name);
-                navigate("/home");
+                navigate("/history");
             } else {
                show("Invalid Credentails");
             }
