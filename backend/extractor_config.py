@@ -46,6 +46,6 @@ extractors = {
 
 need_conversation_eval = ['shunya', 'mysyara'] #Conversation Evaluation based on clarity, coherence etc.
 
-skip_db_search = ['azent', "sbi"] #Skip DB search for conversation_eval and entity extraction.
+skip_db_search = ['azent', "sbi", 'mysyara'] #Skip DB search for conversation_eval and entity extraction.
 
 regenerate_summaries = [] #Regenerate  the summary and save it in db.

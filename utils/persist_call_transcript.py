@@ -76,21 +76,21 @@ def __persist_call_transacription(session, roomname, where, s3_folder_name):
                 os.remove(filename)  # Delete local file after upload
         elif where == 'azure':
             # print 3 line space
-            print("\n\n\n")
-            print("\n"*3)
-            print("Uploading to Azure Blob Storage")
-            print("\n\n\n")
+            # print("\n\n\n")
+            # print("\n"*3)
+            # print("Uploading to Azure Blob Storage")
+            # print("\n\n\n")
 
             azure_connector = BlobConnector(os.getenv("AZURE_CONTAINER_NAME"))
             # using azure_blob path similar to s3 path for consistency
-            print("\n"*3, azure_connector, "\n========"*3)
+            # print("\n"*3, azure_connector, "\n========"*3)
 
             blob_path = f"transcripts/{s3_folder_name}/{get_month_year_as_string()}/{filename}"
 
             # return await azure_connector.upload_file_async(filename, blob_path)
             azure_url = await azure_connector.upload_file_async(filename, blob_path)
             if azure_url:
-                print(f"azure_url: {azure_url}")
+                # print(f"azure_url: {azure_url}")
                 os.remove(filename) # Delete local file after upload
         elif where == 'local':
             pass  # file is already written to local with filename "roomname.txt"

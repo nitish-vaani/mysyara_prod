@@ -16,6 +16,7 @@ import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
 import { FEATURES } from '../../config/features';
 
+
 interface HistoryProps {
   // Add any props here if needed - currently none are required
 }
@@ -232,9 +233,23 @@ const History: React.FC<HistoryProps> = () => {
         return formatDuration(totalSeconds);
     }
 
+    // const dateTime = (input: number) => {
+    //     const date = new Date(input);
+    //     return date.toLocaleString();
+    // }
+
     const dateTime = (input: number) => {
-        const date = new Date(input);
-        return date.toLocaleString();
+    const date = new Date(input);
+    return date.toLocaleString('en-US', { 
+        timeZone: 'Asia/Dubai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    });
     }
 
     useEffect(() => {
@@ -561,6 +576,153 @@ const History: React.FC<HistoryProps> = () => {
         </div>
     ) : undefined;
 
+//     return (
+//     <div className="history">
+//         <Toast ref={toast} position="bottom-right" />
+//         <div className="card">
+//             {FEATURES.SHOW_SELECTION_CHECKBOX ? (
+//                 <DataTable 
+//                     value={filteredList} 
+//                     tableStyle={{ minWidth: '80rem', maxHeight: '100rem', fontSize: '1.5rem' }} 
+//                     size='large' 
+//                     resizableColumns 
+//                     scrollable 
+//                     scrollHeight='65vh'
+//                     header={header}
+//                     dataKey="id"
+//                     paginator
+//                     rows={10}
+//                     rowsPerPageOptions={[5, 10, 25, 50]}
+//                     paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
+//                     currentPageReportTemplate="{first} to {last} of {totalRecords}"
+//                     selection={selectedRecords}
+//                     onSelectionChange={(e: DataTableSelectionMultipleChangeEvent<CallRecord[]>) => setSelectedRecords(e.value || [])}
+//                     selectionMode="checkbox"
+//                 >
+//                     <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
+//                     <Column field="name" header="Name" sortable></Column>
+//                     <Column header="Time" field="End_time" sortable></Column>
+//                     <Column header="Duration" field="duration_ms" sortable></Column>
+//                     <Column header="Type" field="direction" sortable></Column>
+//                     <Column header="From" field="from_number" sortable></Column>
+//                     <Column header="To" field="to_number" sortable></Column>
+//                     <Column header="Call Status" field="call_status" sortable></Column>
+//                     <Column body={successStatusTemplate} header="Success Status" sortable field="call_success_status"></Column>
+//                     <Column body={lockTemplate} header="Details"></Column>
+//                 </DataTable>
+//             ) : (
+//                 <DataTable 
+//                     value={filteredList} 
+//                     tableStyle={{ minWidth: '80rem', maxHeight: '100rem', fontSize: '1.5rem' }} 
+//                     size='large' 
+//                     resizableColumns 
+//                     scrollable 
+//                     scrollHeight='65vh'
+//                     header={header}
+//                     dataKey="id"
+//                     paginator
+//                     rows={10}
+//                     rowsPerPageOptions={[5, 10, 25, 50]}
+//                     paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
+//                     currentPageReportTemplate="{first} to {last} of {totalRecords}"
+//                 >
+//                     <Column field="name" header="Name" sortable></Column>
+//                     <Column header="Time" field="End_time" sortable></Column>
+//                     <Column header="Duration" field="duration_ms" sortable></Column>
+//                     <Column header="Type" field="direction" sortable></Column>
+//                     <Column header="From" field="from_number" sortable></Column>
+//                     <Column header="To" field="to_number" sortable></Column>
+//                     <Column header="Call Status" field="call_status" sortable></Column>
+//                     <Column body={successStatusTemplate} header="Success Status" sortable field="call_success_status"></Column>
+//                     <Column body={lockTemplate} header="Details"></Column>
+//                 </DataTable>
+//             )}
+//         </div>
+        
+//         <Sidebar 
+//             visible={visible} 
+//             onHide={() => setVisible(false)}
+//             position='right'
+//             className='sidebar'
+//         > 
+//             <h2>Call Details</h2>
+//             <div className='sidebar-text'>
+//                 {/* Success Status Section */}
+//                 {sideBarData?.success_status && (
+//                     <div className='success-status-section'>
+//                         <h3>Call Outcome</h3>
+//                         {successStatusTemplate({ call_success_status: sideBarData.success_status })}
+//                     </div>
+//                 )}
+                
+//                 {/* Audio Section - conditionally rendered based on feature toggle */}
+//                 {FEATURES.SHOW_RECORDING && (
+//                     <div className='audio-section'>
+//                         <h3>Recording</h3>
+//                         {audioLoading && (
+//                             <div className="audio-loading">
+//                                 <ScaleLoader height={20} width={2} radius={5} margin={2} color="#979797" />
+//                                 <p>Loading audio...</p>
+//                             </div>
+//                         )}
+                        
+//                         {audioError && (
+//                             <div className="audio-error">
+//                                 <i className="pi pi-exclamation-triangle" style={{color: '#ff9800', marginRight: '8px'}}></i>
+//                                 <span style={{color: '#666', fontStyle: 'italic'}}>{audioError}</span>
+//                             </div>
+//                         )}
+                        
+//                         {audioSrc && !audioError && (
+//                             <audio crossOrigin='anonymous' controls src={audioSrc} style={{width: '100%'}}></audio>
+//                         )}
+//                     </div>
+//                 )}
+                
+//                 {/* Transcript Section - ALWAYS shows */}
+//                 <div className='transcript'>
+//                     <h3>Transcript</h3>
+//                     <p>
+//                         <pre>{sideBarData?.transcript || "Transcript not available"}</pre>  
+//                     </p>
+//                 </div>
+                
+//                 {/* Summary Section - ALWAYS shows */}
+//                 <div className='summary'>
+//                     <h3>Summary</h3>
+//                     <p>
+//                         {sideBarData?.summary || "Summary not available"}
+//                     </p>
+//                 </div>
+                
+//                 {/* Conversation Evaluation - ALWAYS shows */}
+//                 {detailsLoading ? (
+//                     <div className="details-loading">
+//                         <ScaleLoader height={20} width={2} radius={5} margin={2} color="#979797" />
+//                     </div>
+//                 ) : (
+//                     <ConversationEval evalData={conversationEval} />
+//                 )}
+                
+//                 {/* Entity Extraction */}
+//                 {detailsLoading ? (
+//                     <div className="details-loading">
+//                         <ScaleLoader height={20} width={2} radius={5} margin={2} color="#979797" />
+//                     </div>
+//                 ) : (
+//                     <EntityExtraction entities={entityData} />
+//                 )}
+//             </div>
+//         </Sidebar>
+
+//         {loading && (
+//             <div className="loader-overlay">
+//                 <MoonLoader size={50} color="black" />
+//             </div>
+//         )}
+//     </div> 
+// );
+
     return (
     <div className="history">
         <Toast ref={toast} position="bottom-right" />
@@ -585,13 +747,10 @@ const History: React.FC<HistoryProps> = () => {
                     selectionMode="checkbox"
                 >
                     <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                    <Column field="name" header="Name" sortable></Column>
                     <Column header="Time" field="End_time" sortable></Column>
                     <Column header="Duration" field="duration_ms" sortable></Column>
                     <Column header="Type" field="direction" sortable></Column>
                     <Column header="From" field="from_number" sortable></Column>
-                    <Column header="To" field="to_number" sortable></Column>
-                    <Column header="Call Status" field="call_status" sortable></Column>
                     <Column body={successStatusTemplate} header="Success Status" sortable field="call_success_status"></Column>
                     <Column body={lockTemplate} header="Details"></Column>
                 </DataTable>
@@ -611,13 +770,10 @@ const History: React.FC<HistoryProps> = () => {
                     paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
                     currentPageReportTemplate="{first} to {last} of {totalRecords}"
                 >
-                    <Column field="name" header="Name" sortable></Column>
                     <Column header="Time" field="End_time" sortable></Column>
                     <Column header="Duration" field="duration_ms" sortable></Column>
                     <Column header="Type" field="direction" sortable></Column>
                     <Column header="From" field="from_number" sortable></Column>
-                    <Column header="To" field="to_number" sortable></Column>
-                    <Column header="Call Status" field="call_status" sortable></Column>
                     <Column body={successStatusTemplate} header="Success Status" sortable field="call_success_status"></Column>
                     <Column body={lockTemplate} header="Details"></Column>
                 </DataTable>

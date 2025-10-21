@@ -42,7 +42,7 @@ class MysyaraAgent(Agent):
         _prompt = _prompt.replace("{{phone_string}}", convert_number_to_conversational(dial_info["phone"]))
         _prompt = _prompt.replace("{{phone_numeric}}", dial_info["phone"])
         _prompt = _prompt.replace("{{current_time}}", datetime.now().strftime("%Y-%m-%d %H:%M"))
-        print(_prompt)
+        # print(_prompt)
         super().__init__(
             instructions=_prompt
         )

@@ -536,11 +536,135 @@ async def create_dispatch(fastapi_request: Request, db: Session = Depends(get_da
 
 
 
+# @app.get("/api/call-history/{user_id}/{client_name}")
+# async def get_call_history(user_id: int, client_name: str, db: Session = Depends(get_database)):
+#     try:
+#         import time
+#         from datetime import datetime
+        
+#         start_time_total = time.time()
+#         call_history = db.query(models.Call).filter(models.Call.user_id.in_([user_id])).all()
+
+#         curated_response = []
+#         for call in call_history:
+#             updated_call = {}
+#             conversation_id = call.call_id
+            
+#             call_data_row = call
+            
+#             if call_data_row is None:
+#                 if call.call_status == "ended":
+#                     call_status = "ended"
+#                 else:
+#                     call_status = "Ongoing"
+                
+#                 updated_call['Name'] = {'name': call.name}
+#                 updated_call['Start_time'] = call.call_started_at
+#                 updated_call['End_time'] = call.call_ended_at if call.call_ended_at else call.call_started_at
+#                 updated_call['recording_api'] = f"{BASE_URL}/api/stream/{call.call_id}"
+#                 updated_call['call_details'] = f"{BASE_URL}/api/call_details/{client_name}/{user_id}/{call.call_id}"
+#                 updated_call['call_type'] = call.call_type
+#                 updated_call['call_status'] = call_status
+#                 updated_call['from_number'] = call.call_from
+#                 updated_call['to_number'] = call.call_to
+#                 updated_call['direction'] = call.call_type
+#                 updated_call['duration_ms'] = call.call_duration
+#                 updated_call['call_success_status'] = call.call_success_status if call.call_success_status else "Pending"
+#                 updated_call['model_name'] = call.model_id
+
+#             else:
+#                 # Get the duration of the call in ms
+#                 if call_data_row.call_ended_at is None and call_data_row.call_status in ["started", "Call rejected", "Not picked"]:
+#                     duration = 0
+#                 else:
+#                     started_at_str = call_data_row.call_started_at
+#                     ended_at_str = call_data_row.call_ended_at
+
+#                     def safe_parse_datetime(dt_value):
+#                         if dt_value is None:
+#                             return None
+                        
+#                         if isinstance(dt_value, datetime):
+#                             return dt_value
+                        
+#                         if isinstance(dt_value, str):
+#                             try:
+#                                 return datetime.fromisoformat(dt_value.replace('Z', '+00:00'))
+#                             except ValueError:
+#                                 try:
+#                                     return datetime.strptime(dt_value, '%Y-%m-%d %H:%M:%S')
+#                                 except ValueError:
+#                                     print(f"Warning: Could not parse datetime string: {dt_value}")
+#                                     return None
+                        
+#                         print(f"Warning: Unexpected datetime type: {type(dt_value)} with value: {dt_value}")
+#                         return None
+
+#                     if started_at_str and ended_at_str:
+#                         started_at = safe_parse_datetime(started_at_str)
+#                         ended_at = safe_parse_datetime(ended_at_str)
+                        
+#                         if started_at and ended_at:
+#                             duration = (ended_at - started_at).total_seconds() * 1000
+#                         else:
+#                             duration = 0
+#                     else:
+#                         duration = 0
+
+#                 updated_call['Name'] = {'name': call.name}
+#                 updated_call['Start_time'] = call_data_row.call_started_at
+#                 updated_call['End_time'] = call_data_row.call_ended_at if call_data_row.call_ended_at else call.call_started_at
+#                 updated_call['recording_api'] = f"{BASE_URL}/api/stream/{call.call_id}"
+#                 updated_call['call_details'] = f"{BASE_URL}/api/call_details/{client_name}/{user_id}/{call.call_id}"
+#                 updated_call['call_type'] = call.call_type
+#                 updated_call['call_status'] = call_data_row.call_status if call_data_row.call_status else "NA"
+#                 updated_call['from_number'] = call.call_from
+#                 updated_call['to_number'] = call.call_to
+#                 updated_call['direction'] = call.call_type
+#                 updated_call['duration_ms'] = duration
+#                 updated_call['call_success_status'] = call_data_row.call_success_status if call_data_row.call_success_status else "Pending"
+#                 updated_call['model_name'] = call.model_id
+
+#             curated_response.append(updated_call)
+
+#         reversed_list = curated_response[::-1]
+#         return reversed_list
+        
+#     except (OperationalError, DisconnectionError) as e:
+#         logger.warning(f"Database connection issue in get_call_history: {e}")
+#         raise HTTPException(status_code=503, detail="Database connection issue, please try again")
+#     except Exception as e:
+#         logger.error(f"Error fetching call history: {e}")
+#         raise HTTPException(status_code=500, detail=f"Error fetching call history: {str(e)}")
+
 @app.get("/api/call-history/{user_id}/{client_name}")
 async def get_call_history(user_id: int, client_name: str, db: Session = Depends(get_database)):
     try:
         import time
         from datetime import datetime
+        import re
+        
+        def extract_phone_number(call_identifier: str) -> str:
+            """
+            Extract phone number from call identifier format: caller-97165139444-1760182635
+            Returns the middle part (phone number) or the original string if format doesn't match
+            """
+            if not call_identifier:
+                return call_identifier
+            
+            # Try to split by hyphen and get the second part
+            parts = call_identifier.split('-')
+            if len(parts) >= 2:
+                # Return the second part (index 1) which should be the phone number
+                return parts[1]
+            
+            # If split didn't work, try regex to extract digits
+            match = re.search(r'-(\d+)-', call_identifier)
+            if match:
+                return match.group(1)
+            
+            # If no pattern matches, return original
+            return call_identifier
         
         start_time_total = time.time()
         call_history = db.query(models.Call).filter(models.Call.user_id.in_([user_id])).all()
@@ -565,7 +689,7 @@ async def get_call_history(user_id: int, client_name: str, db: Session = Depends
                 updated_call['call_details'] = f"{BASE_URL}/api/call_details/{client_name}/{user_id}/{call.call_id}"
                 updated_call['call_type'] = call.call_type
                 updated_call['call_status'] = call_status
-                updated_call['from_number'] = call.call_from
+                updated_call['from_number'] = extract_phone_number(call.call_from)  # Extract phone number
                 updated_call['to_number'] = call.call_to
                 updated_call['direction'] = call.call_type
                 updated_call['duration_ms'] = call.call_duration
@@ -618,7 +742,7 @@ async def get_call_history(user_id: int, client_name: str, db: Session = Depends
                 updated_call['call_details'] = f"{BASE_URL}/api/call_details/{client_name}/{user_id}/{call.call_id}"
                 updated_call['call_type'] = call.call_type
                 updated_call['call_status'] = call_data_row.call_status if call_data_row.call_status else "NA"
-                updated_call['from_number'] = call.call_from
+                updated_call['from_number'] = extract_phone_number(call.call_from)  # Extract phone number
                 updated_call['to_number'] = call.call_to
                 updated_call['direction'] = call.call_type
                 updated_call['duration_ms'] = duration
@@ -636,6 +760,9 @@ async def get_call_history(user_id: int, client_name: str, db: Session = Depends
     except Exception as e:
         logger.error(f"Error fetching call history: {e}")
         raise HTTPException(status_code=500, detail=f"Error fetching call history: {str(e)}")
+
+
+
 
 @app.get("/api/transcript/{call_id}")
 async def get_transcript(call_id: str, db: Session = Depends(get_database)):

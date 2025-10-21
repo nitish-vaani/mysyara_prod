@@ -131,7 +131,7 @@ def get_stt_instance():
     return deepgram.STT(
         model="nova-3",  
         language="en", 
-        keyterms=keywords_to_boost
+        # keyterms=keywords_to_boost
     )
 
 def get_vad_instance():
