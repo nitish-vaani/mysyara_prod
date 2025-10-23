@@ -24,7 +24,7 @@ def setup_logging():
     # Reduce noise from third-party loggers
     noisy_loggers = [
         "openai", "httpx", "httpcore", "livekit", "asyncio",
-        "botocore", "boto3", "s3transfer", "urllib3"
+        "botocore", "boto3", "s3transfer", "urllib3", "azure"
     ]
     
     for logger_name in noisy_loggers:

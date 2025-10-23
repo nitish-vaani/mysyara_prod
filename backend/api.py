@@ -1129,7 +1129,7 @@ def submit_feedback(feedback: FeedbackCreate, db: Session = Depends(get_database
 @app.get("/api/dashboard", response_model=DashboardResponse)
 async def get_dashboard_data(
     user_id: int,
-    client: str = "sbi",
+    client: str = "mysyara",
     period: str = "7_days",  # "7_days" or "1_day"
     db: Session = Depends(get_database)
 ):
@@ -1138,7 +1138,7 @@ async def get_dashboard_data(
     
     Args:
         user_id: The user ID requesting the dashboard
-        client: The client identifier (default: "sbi")
+        client: The client identifier (default: "mysyara")
         period: The time period for trends ("7_days" or "1_day")
     
     Returns:
@@ -1164,7 +1164,7 @@ async def get_dashboard_data(
 @app.get("/api/dashboard/summary")
 async def get_dashboard_summary(
     user_id: int, 
-    client: str = "sbi", 
+    client: str = "mysyara", 
     db: Session = Depends(get_database)
 ):
     """Get a quick summary of dashboard metrics with real database data"""

@@ -10,6 +10,7 @@ from livekit.agents import (AudioConfig, BackgroundAudioPlayer, BuiltinAudioClip
                            AgentSession, RoomInputOptions)
 from livekit.plugins import noise_cancellation
 from livekit.plugins.turn_detector.english import EnglishModel
+from livekit.agents import llm, stt, tts
 from .ai_models import get_openai_llm, get_tts, get_stt_instance, get_vad_instance
 from .logging_config import get_logger
 from .data_entities import UserData
@@ -35,14 +36,25 @@ def create_agent_session(userdata: UserData, config: Dict[str, Any], agent_confi
     vad_instance = get_vad_instance()
     
     # Create session with all components
-    session = AgentSession[UserData](
-        stt=stt_instance,
-        llm=llm_instance,
-        tts=tts_instance,
-        vad=vad_instance,
-        turn_detection=EnglishModel(),
-        userdata=userdata
-    )
+    if config['STT'] == 'assemblyai': #this can throw issues as not all stt will support turn detection
+        session = AgentSession[UserData](
+            stt=stt.FallbackAdapter(stt_instance),
+            llm=llm_instance,
+            tts=tts.FallbackAdapter(tts_instance),
+            vad=vad_instance,
+            # turn_detection="stt",
+            turn_detection=EnglishModel(),
+            userdata=userdata
+        )
+    else:
+        session = AgentSession[UserData](
+            stt=stt.FallbackAdapter(stt_instance),
+            llm=llm_instance,
+            tts=tts.FallbackAdapter(tts_instance),
+            vad=vad_instance,
+            turn_detection=EnglishModel(),
+            userdata=userdata
+        )
     
     logger.info("Agent session created successfully")
     return session

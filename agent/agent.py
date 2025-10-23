@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from livekit.agents import JobContext, cli, WorkerOptions
 from .helper.entrypoint_handler import handle_entrypoint
+from .helper.config_manager import config_manager
 
+config = config_manager.config
+agent_name = config['agent_name']
 def prewarm_fnc(proc):
     """Prewarm function for session initialization"""
     # proc.userdata["bg_audio_config"] = {
@@ -23,6 +26,6 @@ if __name__ == "__main__":
         WorkerOptions(
             entrypoint_fnc=entrypoint,
             prewarm_fnc=prewarm_fnc,
-            agent_name="Mysyara Agent",
+            agent_name=agent_name,
         )
     )

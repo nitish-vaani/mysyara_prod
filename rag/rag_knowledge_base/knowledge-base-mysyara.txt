@@ -87,6 +87,9 @@
 
     In 'Dubai', Garages are located in 'Al Quoz Industrial Area 3', 'Umm Ramool, Rashidiya', 'Ras Al Khor', 'Mirdif, Wadi Al Amardi' and 'Deira'. Details of each garage is following:
         1. Location: 'Al Quoz Industrial Area 3', Dubai
+            Name on Google Maps: MySyara Car Service Centre 101
+            Address: MySyara 101, 6A Street, Al Quoz Industrial Area 3, Dubai
+            Timings: Monday to Saturday 9:00 AM - 6:00 PM, Sunday Closed
             Services Offered:
                 - Car Wash
                 - Car Servicing
@@ -98,6 +101,9 @@
                 - On-Demand Repairs
 
         2. Loation: 'Umm Ramool, Rashidiya', Dubai
+            Name on Google Maps: MySyara Car Service Centre 102
+            Address: MySyara 102, 3B Street, Umm Ramool, Rashidiya, Dubai
+            Timings: Monday to Saturday 9:00 AM - 6:00 PM, Sunday Closed
             Services Offered:
                 - Car Wash
                 - Car Servicing
@@ -109,6 +115,9 @@
                 - On-Demand Repairs
 
         3. Location: 'Ras Al Khor', Dubai
+            Name on Google Maps: Munich Experts Garage
+            Address: Munich Experts Garage, 17A Street, Ras Al Khor Industrial Area 2, Dubai
+            Timings: Monday to Saturday 9:00 AM - 6:00 PM, Sunday Closed
             Services Offered:
                 - Car Servicing
                 - Oil Change
@@ -120,6 +129,9 @@
                 - Transmission Overhauling
 
         4. Location: 'Mirdif, Wadi Al Amardi', Dubai
+            Name on Google Maps: MySyara Car Service Centre 105
+            Address: ADNOC 217, Wadi Al Amardi West, Dubai
+            Timings: Monday to Saturday 10:00 AM - 8:00 PM, Sunday Closed        
             Services Offered:
                 - Car Servicing
                 - Oil Change
@@ -142,7 +154,10 @@
                 - Detailing & Tinting
 
     In 'Abu Dhabi' only one garage is located:
-        1. Location: 'Mussafah', Abu Dhabi
+            Name on Google Maps: Royal Vision Expert Car Maintenance - MySyara 104
+            Address: Royal Vision Expert, 14th Street, Musaffah 32/1, Abu Dhabi
+            Timings: Saturday to Thursday 9:00 AM - 1:00 PM & 3:00 PM - 8:00 PM, Friday Closed
+            Location: 'Mussafah', Abu Dhabi
             Services Offered:
                 - Car Wash
                 - Car Servicing
@@ -156,7 +171,10 @@
                 - Detailing & Tinting
 
     In 'Ajman' only one garage is located:
-        1. Location: Rawda, Ajman
+            Name on Google Maps: MySyara Car Service Centre 107
+            Address: MySyara 107, 85/1, Makkah Street, Rawdha 1, Ajman
+            Timings: Monday to Saturday 8:00 AM - 12:00 AM, All Days Open
+            Location: Rawda, Ajman
             Services Offered:
                 - Car Wash
                 - Car Servicing

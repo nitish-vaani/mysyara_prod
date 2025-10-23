@@ -1,4 +1,5 @@
 client_name: mysyara
+agent_name: "Mysyara-Test-Agent"
 mode: SIP # SIP, CONSOLE
 record_audio: False
 
@@ -17,4 +18,6 @@ llm: openai
 model: gpt4o
 
 TTS: cartesia # elevenlabs/cartesia/aws/neuphonic/deepgram - azure/playai is not working currently.
+
+STT: assemblyai #deepgram/assemblyai
 idle_call_watcher_msg: "Hello there! Could you please respond? I am here to help."

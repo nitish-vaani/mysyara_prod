@@ -4,9 +4,10 @@ Handles LLM, TTS, and other AI model setup.
 """
 
 import os
+import json
 from typing import Dict, Any
 from dataclasses import dataclass
-from livekit.plugins import elevenlabs, deepgram, openai, cartesia, aws, silero
+from livekit.plugins import elevenlabs, deepgram, openai, cartesia, aws, silero, assemblyai
 from .config_manager import config_manager
 from .logging_config import get_logger
 
@@ -69,17 +70,21 @@ def get_tts(config: Dict[str, Any], voice_config: Dict[str, Any] = None):
             return random.choice(list_view)
 
 
-        return cartesia.TTS(
-            model="sonic-2-2025-03-07",
-            # voice=which_voice if which_voice != "default" else Devansh,
-            voice=get_voice(which_voice),
-            speed=-0.15,
-            language="en",
-            emotion=["positivity:highest", "curiosity:highest"],
-        ) 
+        primary_tts =  cartesia.TTS(
+                            model="sonic-2-2025-03-07",
+                            # voice=which_voice if which_voice != "default" else Devansh,
+                            voice=get_voice(which_voice),
+                            speed=-0.15,
+                            language="en",
+                            emotion=["positivity:highest", "curiosity:highest"],
+                        ) 
+
+        secondary_tts = deepgram.TTS(model="aura-2-arcas-en")
+        return [primary_tts, secondary_tts]
     
     if which_tts == "aws":
         return aws.TTS()
+    
     if which_tts == "elevenlabs":
 
         #Male Voices
@@ -115,24 +120,57 @@ def get_tts(config: Dict[str, Any], voice_config: Dict[str, Any] = None):
             use_speaker_boost=True,
         )
           
-        return elevenlabs.TTS(
-            model="eleven_flash_v2_5", 
-            voice_settings=voice_setting, 
-            voice_id=eric
-        )
+        primary_tts= elevenlabs.TTS(
+                                    model="eleven_flash_v2_5", 
+                                    voice_settings=voice_setting, 
+                                    voice_id=eric
+                                )
+
+        secondary_tts = deepgram.TTS(model="aura-2-arcas-en")
+        return [primary_tts, secondary_tts]
+    
     if which_tts == "deepgram":
         return deepgram.TTS()
 
 def get_stt_instance():
-
     """Get configured STT instance"""
     from ..prompts.boosted_keywords import keywords_to_boost
-    
-    return deepgram.STT(
-        model="nova-3",  
-        language="en", 
-        # keyterms=keywords_to_boost
-    )
+    which_stt = config["STT"]
+
+    if which_stt == 'deepgram':
+        primary_stt = deepgram.STT(
+                            model="nova-3",  
+                            language="en", 
+                            # keyterms=keywords_to_boost
+                        )
+        fallback_stt = assemblyai.STT(
+                            keyterms_prompt=keywords_to_boost,
+                            end_of_turn_confidence_threshold=0.5,
+                            min_end_of_turn_silence_when_confident=160,
+                            max_turn_silence=1280,
+                            format_turns=True
+                        )
+
+        return [primary_stt, fallback_stt]
+
+
+        
+
+    if which_stt == "assemblyai":
+        fallback_stt = deepgram.STT(
+                            model="nova-3",  
+                            language="en", 
+                            keyterms=keywords_to_boost
+                        )
+        primary_stt = assemblyai.STT(
+                            # keyterms_prompt=keywords_to_boost,
+                            end_of_turn_confidence_threshold=0.5,
+                            min_end_of_turn_silence_when_confident=160,
+                            max_turn_silence=1280,
+                            format_turns=True
+                        )
+
+        return [primary_stt, fallback_stt]
 
 def get_vad_instance():
     """Get configured VAD instance"""
