@@ -19,6 +19,15 @@ class S3Connector:
         )
         self.bucket_name = bucket_name
 
+    async def __aenter__(self):
+        """Async context manager entry"""
+        return self
+    
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Async context manager exit"""
+        # S3 client doesn't need explicit cleanup in boto3
+        pass
+
     async def upload_file_async(self, file_path: str, s3_key: str):
         """Uploads a file to S3 asynchronously."""
         try:
@@ -74,4 +83,32 @@ class S3Connector:
             return response["Body"].read()
         except Exception as e:
             logger.error(f"Failed to fetch {s3_key} from S3: {e}")
+            return None
+
+
+    async def fetch_file_range_async(self, file_path: str, start_byte: int, end_byte: int):
+        """Fetch a specific byte range from S3"""
+        try:
+            response = await asyncio.to_thread(
+                self.s3_client.get_object,
+                Bucket=self.bucket_name,
+                Key=file_path,
+                Range=f'bytes={start_byte}-{end_byte}'
+            )
+            return response['Body'].read()
+        except Exception as e:
+            logger.error(f"S3 range fetch failed: {e}")
+            return None
+
+    async def get_blob_size_async(self, file_path: str):
+        """Get file size from S3"""
+        try:
+            response = await asyncio.to_thread(
+                self.s3_client.head_object,
+                Bucket=self.bucket_name,
+                Key=file_path
+            )
+            return response['ContentLength']
+        except Exception as e:
+            logger.error(f"Failed to get S3 file size: {e}")
             return None

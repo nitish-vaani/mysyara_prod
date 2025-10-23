@@ -2,7 +2,7 @@ import axios from "axios"
 import { CreateUserRequest, FeedbackRequest, LoginRequest, TriggerCallRequest, DashboardResponse } from "./types"
 
 // Single base URL for the merged API (running on port 1234)
-axios.defaults.baseURL = `https://mysyara-prod-bk.vaaniresearch.com/api`
+axios.defaults.baseURL = `http://mysyara-new.vaaniresearch.com:8000/api`
 
 const client = "mysyara";
 
@@ -63,7 +63,12 @@ export const getRecStream = async (conversation_id: string) => {
   }
 };
 
+
+
+
+
 // Dashboard API calls - now using the same base URL
+
 export const getDashboardData = (user_id: string, period: string = "7_days"): Promise<{ data: DashboardResponse }> => {
   return axios.get(`/dashboard`, {
     params: {

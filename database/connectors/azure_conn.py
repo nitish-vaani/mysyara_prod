@@ -106,3 +106,61 @@ class BlobConnector:
         except Exception as e:
             # logger.error(f"Failed to fetch {blob_name} from Azure Blob: {e}")
             return None
+
+
+    async def fetch_file_range_async(self, blob_name: str, start_byte: int, end_byte: int):
+        """Fetch a specific byte range from Azure Blob"""
+        await self._ensure_client()
+        
+        try:
+            blob_client = self.container_client.get_blob_client(blob_name)
+            
+            # Download only the specified range
+            stream = await blob_client.download_blob(offset=start_byte, length=end_byte - start_byte + 1)
+            data = await stream.readall()
+            return data
+        except ResourceNotFoundError:
+            return None
+        except AzureError as e:
+            logger.error(f"Azure Blob range fetch failed: {str(e)}")
+            return None
+        # finally:
+        #     await self.close()
+
+    async def get_blob_size_async(self, blob_name: str):
+        """Get the size of a blob in bytes"""
+        await self._ensure_client()
+        
+        try:
+            blob_client = self.container_client.get_blob_client(blob_name)
+            properties = await blob_client.get_blob_properties()
+            return properties.size
+        except ResourceNotFoundError:
+            return None
+        except AzureError as e:
+            logger.error(f"Failed to get blob size: {str(e)}")
+            return None
+        # finally:
+        #     await self.close()
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Async context manager exit - ensure cleanup"""
+        if self.blob_service_client:
+            try:
+                await self.blob_service_client.close()
+            except Exception as e:
+                logger.warning(f"Error closing blob service client: {e}")
+            finally:
+                self.blob_service_client = None
+                self.container_client = None
+
+    async def close(self):
+        """Explicitly close the blob service client"""
+        if self.blob_service_client:
+            try:
+                await self.blob_service_client.close()
+            except Exception as e:
+                logger.warning(f"Error closing blob service client: {e}")
+            finally:
+                self.blob_service_client = None
+                self.container_client = None

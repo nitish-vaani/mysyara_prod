@@ -1,7 +1,8 @@
 client_name: mysyara
 agent_name: "Mysyara-Test-Agent"
 mode: SIP # SIP, CONSOLE
-record_audio: False
+record_audio: True
+audio_record_location: azure #azure/s3
 
 store_transcription:
   switch: True # True, False

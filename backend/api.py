@@ -1,5 +1,5 @@
 ##################################################################################################
-from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi import FastAPI, HTTPException, Depends, Request, Header
 from pydantic import BaseModel, Field, validator
 from typing import Optional, List, Dict, Any
 import uvicorn
@@ -15,6 +15,7 @@ from database.connectors.s3 import S3Connector
 from database.connectors.azure_conn import BlobConnector
 
 from utils.utility import get_month_year_from_datetime, get_call_duration, current_time, strip_data_func
+from utils.utils import get_month_year_as_string
 from datetime import datetime, timedelta
 from urllib.parse import unquote
 from .extractor_config import *
@@ -32,6 +33,7 @@ import asyncio
 import json
 import logging
 import random
+import re
 from agent.helper.config_manager import config_manager
 
 
@@ -337,7 +339,6 @@ def get_real_dashboard_metrics(db: Session, user_id: int, client: str, period: s
         logger.error(f"Error generating dashboard metrics: {e}")
         raise HTTPException(status_code=500, detail=f"Error generating dashboard metrics: {str(e)}")
 
-
 def generate_fallback_dashboard_data(period: str) -> DashboardResponse:
     """Generate fallback dummy data if database queries fail"""
     if period == "1_day":
@@ -491,7 +492,7 @@ async def create_dispatch(fastapi_request: Request, db: Session = Depends(get_da
             raise HTTPException(status_code=500, detail=result["error"])
         
         # Parse the result output to extract the room ID
-        import re
+        
         
         # Extract room ID
         room_match = re.search(r'room:"(.*?)"', result["output"])
@@ -531,111 +532,6 @@ async def create_dispatch(fastapi_request: Request, db: Session = Depends(get_da
         db.rollback()
         logger.error(f"Error creating dispatch: {e}")
         raise HTTPException(status_code=500, detail=f"Error creating dispatch: {str(e)}")
-
-
-
-
-
-# @app.get("/api/call-history/{user_id}/{client_name}")
-# async def get_call_history(user_id: int, client_name: str, db: Session = Depends(get_database)):
-#     try:
-#         import time
-#         from datetime import datetime
-        
-#         start_time_total = time.time()
-#         call_history = db.query(models.Call).filter(models.Call.user_id.in_([user_id])).all()
-
-#         curated_response = []
-#         for call in call_history:
-#             updated_call = {}
-#             conversation_id = call.call_id
-            
-#             call_data_row = call
-            
-#             if call_data_row is None:
-#                 if call.call_status == "ended":
-#                     call_status = "ended"
-#                 else:
-#                     call_status = "Ongoing"
-                
-#                 updated_call['Name'] = {'name': call.name}
-#                 updated_call['Start_time'] = call.call_started_at
-#                 updated_call['End_time'] = call.call_ended_at if call.call_ended_at else call.call_started_at
-#                 updated_call['recording_api'] = f"{BASE_URL}/api/stream/{call.call_id}"
-#                 updated_call['call_details'] = f"{BASE_URL}/api/call_details/{client_name}/{user_id}/{call.call_id}"
-#                 updated_call['call_type'] = call.call_type
-#                 updated_call['call_status'] = call_status
-#                 updated_call['from_number'] = call.call_from
-#                 updated_call['to_number'] = call.call_to
-#                 updated_call['direction'] = call.call_type
-#                 updated_call['duration_ms'] = call.call_duration
-#                 updated_call['call_success_status'] = call.call_success_status if call.call_success_status else "Pending"
-#                 updated_call['model_name'] = call.model_id
-
-#             else:
-#                 # Get the duration of the call in ms
-#                 if call_data_row.call_ended_at is None and call_data_row.call_status in ["started", "Call rejected", "Not picked"]:
-#                     duration = 0
-#                 else:
-#                     started_at_str = call_data_row.call_started_at
-#                     ended_at_str = call_data_row.call_ended_at
-
-#                     def safe_parse_datetime(dt_value):
-#                         if dt_value is None:
-#                             return None
-                        
-#                         if isinstance(dt_value, datetime):
-#                             return dt_value
-                        
-#                         if isinstance(dt_value, str):
-#                             try:
-#                                 return datetime.fromisoformat(dt_value.replace('Z', '+00:00'))
-#                             except ValueError:
-#                                 try:
-#                                     return datetime.strptime(dt_value, '%Y-%m-%d %H:%M:%S')
-#                                 except ValueError:
-#                                     print(f"Warning: Could not parse datetime string: {dt_value}")
-#                                     return None
-                        
-#                         print(f"Warning: Unexpected datetime type: {type(dt_value)} with value: {dt_value}")
-#                         return None
-
-#                     if started_at_str and ended_at_str:
-#                         started_at = safe_parse_datetime(started_at_str)
-#                         ended_at = safe_parse_datetime(ended_at_str)
-                        
-#                         if started_at and ended_at:
-#                             duration = (ended_at - started_at).total_seconds() * 1000
-#                         else:
-#                             duration = 0
-#                     else:
-#                         duration = 0
-
-#                 updated_call['Name'] = {'name': call.name}
-#                 updated_call['Start_time'] = call_data_row.call_started_at
-#                 updated_call['End_time'] = call_data_row.call_ended_at if call_data_row.call_ended_at else call.call_started_at
-#                 updated_call['recording_api'] = f"{BASE_URL}/api/stream/{call.call_id}"
-#                 updated_call['call_details'] = f"{BASE_URL}/api/call_details/{client_name}/{user_id}/{call.call_id}"
-#                 updated_call['call_type'] = call.call_type
-#                 updated_call['call_status'] = call_data_row.call_status if call_data_row.call_status else "NA"
-#                 updated_call['from_number'] = call.call_from
-#                 updated_call['to_number'] = call.call_to
-#                 updated_call['direction'] = call.call_type
-#                 updated_call['duration_ms'] = duration
-#                 updated_call['call_success_status'] = call_data_row.call_success_status if call_data_row.call_success_status else "Pending"
-#                 updated_call['model_name'] = call.model_id
-
-#             curated_response.append(updated_call)
-
-#         reversed_list = curated_response[::-1]
-#         return reversed_list
-        
-#     except (OperationalError, DisconnectionError) as e:
-#         logger.warning(f"Database connection issue in get_call_history: {e}")
-#         raise HTTPException(status_code=503, detail="Database connection issue, please try again")
-#     except Exception as e:
-#         logger.error(f"Error fetching call history: {e}")
-#         raise HTTPException(status_code=500, detail=f"Error fetching call history: {str(e)}")
 
 @app.get("/api/call-history/{user_id}/{client_name}")
 async def get_call_history(user_id: int, client_name: str, db: Session = Depends(get_database)):
@@ -761,9 +657,6 @@ async def get_call_history(user_id: int, client_name: str, db: Session = Depends
         logger.error(f"Error fetching call history: {e}")
         raise HTTPException(status_code=500, detail=f"Error fetching call history: {str(e)}")
 
-
-
-
 @app.get("/api/transcript/{call_id}")
 async def get_transcript(call_id: str, db: Session = Depends(get_database)):
     """Retrieve the transcript for a call"""
@@ -850,59 +743,304 @@ async def get_transcript(call_id: str, db: Session = Depends(get_database)):
     except Exception as e:
         return {"transcript": "Error retrieving transcript", "status_code": 500, "function": "get_transcript(exception)", "error": str(e)}
 
+##This code works
+# @app.get("/api/stream/{call_id}")
+# async def stream_audio(call_id: str):
+#     """Stream audio file from S3"""
+#     try:
+#         storage_location = config['audio_record_location'].lower()
+#         path_of_recording = f"recordings/ogg/{config['client_name']}/{get_month_year_as_string()}/{call_id}.ogg"
+#         audio_bytes = None
+
+#         if storage_location == "azure":
+#             azure_connector = BlobConnector(os.getenv("AZURE_CONTAINER_NAME"))
+#             audio_bytes = await azure_connector.fetch_file_async(path_of_recording)
+
+#         elif storage_location == "s3":
+#             s3_bucket = os.getenv("AWS_BUCKET")
+#             if not s3_bucket:
+#                 raise HTTPException(status_code=404, detail="Audio storage not configured")
+#             s3_connector = S3Connector(s3_bucket)
+#             audio_bytes = await s3_connector.fetch_file_async(path_of_recording)
+
+#         else:
+#             raise HTTPException(status_code=500, detail=f"Unsupported storage location: {storage_location}")
+
+#         if audio_bytes is None:
+#             raise HTTPException(status_code=404, detail="Audio file not found")
+        
+#         async def stream_audio_content():
+#             yield audio_bytes
+        
+#         return StreamingResponse(
+#             stream_audio_content(),
+#             media_type="audio/ogg"
+#         )
+    
+#     except HTTPException:
+#         raise
+#     except Exception as e:
+#         logger.error(f"Error streaming audio: {e}")
+#         raise HTTPException(status_code=500, detail=f"Error streaming audio: {str(e)}")
 
 
 @app.get("/api/stream/{call_id}")
-async def stream_audio(call_id: str):
-    """Stream audio file from S3"""
+async def stream_audio(
+        call_id: str, 
+        request: Request,
+        range: Optional[str] = Header(None)
+    ):
+    """Stream audio file with Range request support"""
     try:
-        # print "where" from "loaded config"
-        print(f"{'*'*20}\n")
-        storage_location = config['store_transcription']['where'].lower()
-        print(f"where: {config['store_transcription']['where']}")
-        print(f"{'*'*20}\n")
+        storage_location = config['audio_record_location'].lower()
+        path_of_recording = f"recordings/ogg/{config['client_name']}/{get_month_year_as_string()}/{call_id}.ogg"
         
-        path_of_recording = f"mp3/{call_id}.mp3"
-        audio_bytes = None
-
+        logger.info(f"Streaming: {call_id}, Storage: {storage_location}, Range: {range}")
+        
+        # Get connector based on storage type
         if storage_location == "azure":
-            azure_connector = BlobConnector(os.getenv("AZURE_CONTAINER_NAME"))
-            print(f"Using Azure Blob Connector: {azure_connector}")
-            audio_bytes = await azure_connector.fetch_file_async(path_of_recording)
-
+            container_name = os.getenv("AZURE_CONTAINER_NAME")
+            if not container_name:
+                raise HTTPException(status_code=500, detail="Azure not configured")
+            connector = BlobConnector(container_name)
+            
         elif storage_location == "s3":
             s3_bucket = os.getenv("AWS_BUCKET")
             if not s3_bucket:
-                raise HTTPException(status_code=404, detail="Audio storage not configured")
-            s3_connector = S3Connector(s3_bucket)
-            print(f"Using S3 Connector: {s3_connector}")
-            audio_bytes = await s3_connector.fetch_file_async(path_of_recording)
-
+                raise HTTPException(status_code=500, detail="S3 not configured")
+            connector = S3Connector(s3_bucket)
+            
         else:
-            raise HTTPException(status_code=500, detail=f"Unsupported storage location: {storage_location}")
+            raise HTTPException(status_code=500, detail=f"Unsupported storage: {storage_location}")
+        
+        # Use connector with context manager
+        async with connector:
+            # Get file size (method names should match)
+            if storage_location == "azure":
+                file_size = await connector.get_blob_size_async(path_of_recording)
+            else:  # s3
+                file_size = await connector.get_file_size_async(path_of_recording)
+            
+            if file_size is None:
+                raise HTTPException(status_code=404, detail="Audio file not found")
 
-        if audio_bytes is None:
-            raise HTTPException(status_code=404, detail="Audio file not found")
+            # Parse Range header
+            start, end = parse_range_header(range, file_size)
+            
+            # Validate range
+            if start >= file_size or end >= file_size or start > end:
+                return Response(
+                    status_code=416,
+                    headers={"Content-Range": f"bytes */{file_size}"}
+                )
+            
+            # Fetch range
+            chunk = await connector.fetch_file_range_async(path_of_recording, start, end)
+            
+            if chunk is None:
+                raise HTTPException(status_code=404, detail="Audio file not found")
         
-        async def stream_audio_content():
-            yield audio_bytes
-        
-        return StreamingResponse(
-            stream_audio_content(),
-            media_type="audio/mpeg"
-        )
+        # Build response
+        return build_range_response(chunk, start, end, file_size)
     
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error streaming audio: {e}")
+        logger.error(f"Error streaming {call_id}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Error streaming audio: {str(e)}")
 
 
+def parse_range_header(range_header: Optional[str], file_size: int) -> tuple[int, int]:
+    """Parse HTTP Range header and return (start, end) tuple"""
+    start = 0
+    end = file_size - 1
+    
+    if range_header:
+        range_match = re.match(r'bytes=(\d+)-(\d*)', range_header)
+        if range_match:
+            start = int(range_match.group(1))
+            if range_match.group(2):
+                end = int(range_match.group(2))
+            else:
+                end = file_size - 1
+    
+    return start, end
+
+
+def build_range_response(chunk: bytes, start: int, end: int, file_size: int) -> Response:
+    """Build HTTP response with appropriate headers for range requests"""
+    content_length = end - start + 1
+    
+    headers = {
+        "Content-Type": "audio/ogg",
+        "Accept-Ranges": "bytes",
+        "Content-Length": str(content_length),
+        "Content-Range": f"bytes {start}-{end}/{file_size}",
+        "Cache-Control": "public, max-age=3600",
+    }
+    
+    status_code = 200 if (start == 0 and end == file_size - 1) else 206
+    
+    return Response(
+        content=chunk,
+        status_code=status_code,
+        headers=headers,
+        media_type="audio/ogg"
+    )
 
 @app.get("/api/call_details/{client}/{user_id}/{call_id}")
 async def get_call_details(client: str, user_id: str, call_id: str, db: Session = Depends(get_database)):
-    user_id = int(user_id)  # Ensure user_id is an integer
+    try:
+        print(f"User Id: {user_id}")
+        print(f"Call_id: {call_id}")
+        # Verify Call ownership
+        call_record = (
+            db.query(models.Call)
+            .join(models.Model, models.Model.model_id == models.Call.model_id)
+            .filter(
+                models.Call.user_id == user_id,
+                models.Call.call_id == call_id,
+                models.Model.client_name == client.upper()
+            )
+            .first()
+        )
+
+        if not call_record:
+            raise HTTPException(status_code=403, detail="Call does not belong to the user")
+
+        transcription_val = await get_transcript(call_id, db)
+        if transcription_val is None:
+            return JSONResponse({
+                "transcription": "Waiting for Transcription to be available. Please try again after the call is over.",
+                'entity': "Waiting for Transcription to be available. Please try again after the call is over.",
+                "conversation_eval": "Waiting for Transcription to be available. Please try again after the call is over.",
+                "summary": "Waiting for Transcription to be available. Please try again after the call is over."
+            })
+        
+        elif transcription_val['transcript'] in ['Error fetching transcript', 'Transcript not found in S3', "Transcript is empty"]:
+            return JSONResponse({
+                "transcription": "Transcript is not available for further evaluations.",
+                'entity': "Transcript is not available for further evaluations.",
+                "conversation_eval": "Transcript is not available for further evaluations.",
+                "summary": "Transcript is not available for further evaluations."
+            })
+
+        transcription_ = transcription_val['transcript']
+
+        # Check if summary exists in db, else generate it
+        if client in regenerate_summaries:
+            summary_ = await call_summary(transcription_)
+            if summary_.get("status_code") == 200:
+                summary = summary_.get("summary")
+                call_record.call_summary = summary
+                db.commit()
+            else:
+                summary = "Error generating summary"
+        else:
+            if call_record.call_summary:
+                summary = call_record.call_summary
+            else:
+                summary_ = await call_summary(transcription_)
+                print(f"summary_: {summary_}")
+                if summary_.get("status_code") == 200:
+                    summary = summary_.get("summary")
+                    call_record.call_summary = summary
+                    db.commit()
+                else:
+                    summary = "Error generating summary"
+
+        # Entity Extraction and conversation evaluation
+        extractor_func = None
+        field_list = None
+        extractors_data = (extractors.get(client))
+        if extractors_data:
+            extractor_func = extractors_data.get("function")
+            field_list = extractors_data.get("entities") if extractors_data.get("entities") is not None else None
+        else:
+            entity_extraction = "No extractor defined for this client"
+            if client in need_conversation_eval:
+                conversation_eva = call_record.call_conversation_quality if call_record.call_conversation_quality else {}
+            else:
+                conversation_eva = {}
+
+            return JSONResponse({
+                "transcription": transcription_,
+                'entity': entity_extraction,
+                "conversation_eval": conversation_eva,
+                "summary": summary
+            })
+        
+        if extractor_func is None:
+            raise HTTPException(status_code=400, detail=f"No extractor defined for client: {client}")
+
+        conversation_eva = None
+        if client in skip_db_search:
+            entity_extraction = await extractor_func(
+                transcript=transcription_,
+                fields=field_list
+            )
+            if client in need_conversation_eval:
+                conversation_eva = await conversation_eval(transcript=transcription_)
+            else:
+                conversation_eva = {}
+
+            call_record.call_conversation_quality = conversation_eva
+            call_record.call_entity = entity_extraction
+            db.commit()
+        else:
+            if call_record.call_conversation_quality and call_record.call_entity:
+                if client in need_conversation_eval:
+                    conversation_eva = call_record.call_conversation_quality
+                else:
+                    conversation_eva = {}
+                entity_extraction = call_record.call_entity
+            else:
+                if client in need_conversation_eval:
+                    conversation_eva = await conversation_eval(transcript=transcription_)
+                else:
+                   conversation_eva = {} 
+                   
+                entity_extraction = await extractor_func(
+                    transcript=transcription_,
+                    fields=field_list
+                )
+                
+                call_record.call_conversation_quality = conversation_eva
+                call_record.call_entity = entity_extraction
+                db.commit()
+
+        return JSONResponse({
+            "transcription": transcription_,
+            'entity': entity_extraction,
+            "conversation_eval": conversation_eva,
+            "summary": summary
+        })
+
+    except HTTPException:
+        raise
+    except (OperationalError, DisconnectionError) as e:
+        logger.warning(f"Database connection issue in get_call_details: {e}")
+        raise HTTPException(status_code=503, detail="Database connection issue, please try again")
+    except Exception as e:
+        logger.error(f"Error getting call details: {e}")
+        raise HTTPException(status_code=500, detail=f"Error getting call details: {str(e)}")
+
+
+async def get_blob_size_async(self, blob_name: str):
+    """Get the size of a blob in bytes"""
+    await self._ensure_client()
+    
+    try:
+        blob_client = self.container_client.get_blob_client(blob_name)
+        properties = await blob_client.get_blob_properties()
+        return properties.size
+    except ResourceNotFoundError:
+        return None
+    except AzureError as e:
+        logger.error(f"Failed to get blob size: {str(e)}")
+        return None
+    finally:
+        await self.close()
     try:
         # Step 1: Verify Call ownership - FIXED: Updated join syntax
         call_record = (
@@ -1046,8 +1184,6 @@ async def get_call_details(client: str, user_id: str, call_id: str, db: Session 
         logger.error(f"Error getting call details: {e}")
         raise HTTPException(status_code=500, detail=f"Error getting call details: {str(e)}")
 
-
-
 #Model APIs
 @app.post("/api/models/")
 def create_model(model: ModelCreate, db: Session = Depends(get_database)):
@@ -1128,11 +1264,11 @@ def submit_feedback(feedback: FeedbackCreate, db: Session = Depends(get_database
 # Dashboard APIs
 @app.get("/api/dashboard", response_model=DashboardResponse)
 async def get_dashboard_data(
-    user_id: int,
-    client: str = "mysyara",
-    period: str = "7_days",  # "7_days" or "1_day"
-    db: Session = Depends(get_database)
-):
+        user_id: int,
+        client: str = "mysyara",
+        period: str = "7_days",  # "7_days" or "1_day"
+        db: Session = Depends(get_database)
+    ):
     """
     Get dashboard data for a specific user and client with real database metrics
     
@@ -1163,10 +1299,10 @@ async def get_dashboard_data(
 
 @app.get("/api/dashboard/summary")
 async def get_dashboard_summary(
-    user_id: int, 
-    client: str = "mysyara", 
-    db: Session = Depends(get_database)
-):
+        user_id: int, 
+        client: str = "mysyara", 
+        db: Session = Depends(get_database)
+    ):
     """Get a quick summary of dashboard metrics with real database data"""
     
     try:
