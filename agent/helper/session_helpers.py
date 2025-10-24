@@ -11,7 +11,7 @@ from livekit.agents import (AudioConfig, BackgroundAudioPlayer, BuiltinAudioClip
 from livekit.plugins import noise_cancellation
 from livekit.plugins.turn_detector.english import EnglishModel
 from livekit.agents import llm, stt, tts
-from .ai_models import get_openai_llm, get_tts, get_stt_instance, get_vad_instance, get_llm_instance
+from .ai_models import get_openai_llm, get_tts, get_stt_instance, get_vad_instance, get_llm_instance, get_azure_llm
 from .logging_config import get_logger
 from .data_entities import UserData
 from .config_manager import config_manager
@@ -49,6 +49,7 @@ def create_agent_session(userdata: UserData, config: Dict[str, Any], agent_confi
     secondary_llm_model = config['LLM']['secondary_model']
 
     # Get AI model instances
+    # llm_instance = get_azure_llm()
     # llm_instance = get_openai_llm()
     llm_instance = get_llm_instance(primary_llm_provider, secondary_llm_provider, primary_llm_model, secondary_llm_model)
     tts_instance = get_tts(config, voice_config=agent_config if agent_config else None)
@@ -63,14 +64,15 @@ def create_agent_session(userdata: UserData, config: Dict[str, Any], agent_confi
             llm=llm.FallbackAdapter(llm_instance),
             tts=tts.FallbackAdapter(tts_instance),
             vad=vad_instance,
-            # turn_detection="stt",
+            turn_detection="stt",
             # turn_detection=EnglishModel(),
             userdata=userdata
         )
     else:
         session = AgentSession[UserData](
             stt=stt.FallbackAdapter(stt_instance),
-            llm=llm.FallbackAdapter(llm_instance),
+            llm=llm_instance,
+            # llm=llm.FallbackAdapter(llm_instance),
             tts=tts.FallbackAdapter(tts_instance),
             vad=vad_instance,
             # turn_detection=EnglishModel(),

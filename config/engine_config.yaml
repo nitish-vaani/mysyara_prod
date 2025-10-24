@@ -16,11 +16,11 @@ bg_thinking_sound: False
 idle_call_hungup: True
 
 LLM: 
-  primary_provider: openai #openai/azure/gemini
+  primary_provider: azure #openai/azure/gemini
   primary_model: gpt-4o #gpt4o/gpt4/5/gemini_model names
 
-  secondary_provider: azure
-  secondary_model: gpt-40-mini
+  secondary_provider: openai
+  secondary_model: gpt-4o-mini
 
 
 

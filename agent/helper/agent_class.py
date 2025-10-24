@@ -6,6 +6,7 @@ Contains the main agent logic and function tools.
 import json
 import asyncio
 import time
+from typing import Annotated
 
 from datetime import datetime
 from typing import Any, AsyncIterable
@@ -121,19 +122,6 @@ class MysyaraAgent(Agent):
         user_msg_lower = user_message.lower()
         return any(keyword in user_msg_lower for keyword in transfer_keywords)
 
-    # async def on_user_turn_completed(
-    #     self, turn_ctx: ChatContext, new_message: ChatMessage,
-    # ) -> None:
-    #     """Called when user completes a turn - enriches with RAG content"""
-    #     # Import here to avoid circular imports
-    #     from .rag_connector import enrich_with_rag
-        
-    #     rag_content = await enrich_with_rag('/n'.join(new_message.content))
-    #     turn_ctx.add_message(
-    #         role="assistant", 
-    #         content=f"Additional information relevant to the user's next message: {rag_content}"
-    #     )
-    #     await self.update_chat_ctx(turn_ctx)
     @function_tool
     async def search_mysyara_knowledge_base(self, context: RunContext, query: str):
         """
@@ -242,59 +230,20 @@ class MysyaraAgent(Agent):
         logger.info("Booking appointment initiated")
         return "I'll help you book an appointment. Let me get the available slots for you."
     
-    # @function_tool()
-    # async def transfer_to_human_agent(self, ctx: RunContext, reason: str = "customer_request"):
-    #     """Transfer the call to a human agent"""
-    #     participant_id = self.participant.identity if self.participant else 'unknown'
-    #     logger.info(f"Initiating call transfer for {participant_id}, reason: {reason}")
-        
-    #     try:
-    #         # Import here to avoid circular imports
-    #         from .data_entities import UserData
-    #         userdata: UserData = ctx.session.userdata
-            
-    #         if userdata.ctx and userdata.ctx.room:
-    #             # Publish transfer request via data channel
-    #             transfer_data = {
-    #                 "action": "transfer",
-    #                 "reason": reason,
-    #                 "context": f"Agent transferring call due to: {reason}",
-    #                 "timestamp": time.time()
-    #             }
-                
-    #             await userdata.ctx.room.local_participant.publish_data(
-    #                 json.dumps(transfer_data).encode('utf-8'),
-    #                 reliable=True
-    #             )
-                
-    #             logger.info(f"Transfer request published: {transfer_data}")
-                
-    #             # Inform the customer
-    #             await ctx.session.generate_reply(
-    #                 instructions="Tell the customer you are transferring them to a human agent who can better assist them. Keep it brief and professional."
-    #             )
-                
-    #             return "Transfer request initiated"
-    #         else:
-    #             logger.error("No room context available for transfer")
-    #             return "Transfer failed - no room context"
-                
-    #     except Exception as e:
-    #         logger.error(f"Error initiating transfer: {e}")
-    #         return "Transfer request failed"
-
-    #     # @function_tool()
-    #     # async def get_service_pricing(self, ctx: RunContext):
-    #     #     """Get pricing information for services"""
-    #     #     # This can be expanded with actual pricing logic
-    #     #     logger.info("Service pricing requested")
-    #     #     return "Let me get you the latest pricing information for our services."
 
     @function_tool()
-    async def transfer_to_human_agent(self, ctx: RunContext, reason: str = "customer_request"):
-        """Transfer the call to a human agent"""
+    async def transfer_to_human_agent(
+        self, 
+        ctx: RunContext, 
+        reason: str):
+        """Transfer the call to a human agent
+        Args:
+        reason: The reason for transfer (e.g., 'customer_request', 'complex_query')
+        """
+
         participant_id = self.participant.identity if self.participant else 'unknown'
         logger.info(f"Initiating call transfer for {participant_id}, reason: {reason}")
+        reason_ = reason if reason is not None else customer_request
         
         try:
             from .data_entities import UserData
@@ -303,8 +252,8 @@ class MysyaraAgent(Agent):
             if userdata.ctx and userdata.ctx.room:
                 transfer_data = {
                     "action": "transfer",
-                    "reason": reason,
-                    "context": f"Agent transferring call due to: {reason}",
+                    "reason": reason_,
+                    "context": f"Agent transferring call due to: {reason_}",
                     "timestamp": time.time()
                 }
                 await self.session.say(

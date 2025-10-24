@@ -279,7 +279,7 @@ def get_openai_llm(model_name=None):
         logger.info(f"Successfully created OpenAI LLM instance: {model}")
         logger.info("******************************")
         return llm_instance
-        
+
         
     except Exception as e:
         logger.error(f"Failed to create OpenAI LLM: {e}")
@@ -309,6 +309,7 @@ def get_gemini_llm(model_name=None):
 
 def get_azure_llm(model_name=None):
     """Get properly configured Azure OpenAI LLM"""
+    model_name=None
     try:
         azure_cfg = config.get("azure", {}) if isinstance(config, dict) else {}
         azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT") or azure_cfg.get("endpoint")
@@ -344,7 +345,7 @@ def get_azure_llm(model_name=None):
             api_version=azure_api_version,
         )
 
-    
+
     except Exception as e:
         logger.error(f"Failed to create Azure OpenAI LLM: {e}")
         raise

@@ -49,7 +49,6 @@ class ConfigManager:
     def get_openai_api_key(self) -> str:
         """Get and validate OpenAI API key"""
         api_key = self.get_env_var("OPENAI_API_KEY")
-        logger.info(f"OpenAI API Key configured: {api_key[:15]}...{api_key[-4:]}")
         return api_key
     
     def get_sip_trunk_id(self) -> str:
