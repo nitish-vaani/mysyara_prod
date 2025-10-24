@@ -11,7 +11,7 @@ from livekit.agents import (AudioConfig, BackgroundAudioPlayer, BuiltinAudioClip
 from livekit.plugins import noise_cancellation
 from livekit.plugins.turn_detector.english import EnglishModel
 from livekit.agents import llm, stt, tts
-from .ai_models import get_openai_llm, get_tts, get_stt_instance, get_vad_instance
+from .ai_models import get_openai_llm, get_tts, get_stt_instance, get_vad_instance, get_llm_instance
 from .logging_config import get_logger
 from .data_entities import UserData
 from .config_manager import config_manager
@@ -19,7 +19,6 @@ from utils.utils import get_month_year_as_string
 
 # Load configuration
 config = config_manager.config
-
 logger = get_logger(__name__)
 
 def prewarm_session(proc):
@@ -34,8 +33,24 @@ def prewarm_session(proc):
 
 def create_agent_session(userdata: UserData, config: Dict[str, Any], agent_config: Dict[str, Any]=None) -> AgentSession:
     """Create and configure an agent session with all required components"""
+    primary_stt_provider = config['STT']['primary_provider']
+    secondary_stt_provider = config['STT']['secondary_provider']
+    primary_stt_model = config['STT']['primary_model']
+    secondary_stt_model = config['STT']['secondary_model']
+
+    primary_tts_provider = config['TTS']['primary_provider']
+    secondary_tts_provider = config['TTS']['secondary_provider']
+    primary_tts_model = config['TTS']['primary_model']
+    secondary_tts_model = config['TTS']['secondary_model']
+    
+    primary_llm_provider = config['LLM']['primary_provider']
+    secondary_llm_provider = config['LLM']['secondary_provider']
+    primary_llm_model = config['LLM']['primary_model']
+    secondary_llm_model = config['LLM']['secondary_model']
+
     # Get AI model instances
-    llm_instance = get_openai_llm()
+    # llm_instance = get_openai_llm()
+    llm_instance = get_llm_instance(primary_llm_provider, secondary_llm_provider, primary_llm_model, secondary_llm_model)
     tts_instance = get_tts(config, voice_config=agent_config if agent_config else None)
     stt_instance = get_stt_instance()
     vad_instance = get_vad_instance()
@@ -44,7 +59,8 @@ def create_agent_session(userdata: UserData, config: Dict[str, Any], agent_confi
     if config['STT'] == 'assemblyai': #this can throw issues as not all stt will support turn detection
         session = AgentSession[UserData](
             stt=stt.FallbackAdapter(stt_instance),
-            llm=llm_instance,
+            # llm=llm_instance,
+            llm=llm.FallbackAdapter(llm_instance)
             tts=tts.FallbackAdapter(tts_instance),
             vad=vad_instance,
             # turn_detection="stt",

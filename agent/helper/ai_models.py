@@ -13,33 +13,96 @@ from .logging_config import get_logger
 
 logger = get_logger(__name__)
 config = config_manager.config
-def get_openai_llm():
+
+
+
+config_llm = {
+    gemini: get_gemini_llm,
+    openai: get_openai_llm,
+    azure: get_azure_llm}
+
+def get_openai_llm(model_name=None):
     """Get properly configured OpenAI LLM"""
     api_key = config_manager.get_openai_api_key()
-    
+    model= model_name if model_name is not None else "gpt-5"
     try:
-        # For project-specific keys, we might need to handle differently
-        if api_key.startswith("sk-proj-"):
-            logger.info("Using project-specific OpenAI API key")
-        
-        if config['llm'] == 'cerebras':
-            llm_instance = openai.LLM.with_cerebras(
-                 model=config['model'],
-                 api_key=api_key
-            )
-        else:
-            llm_instance = openai.LLM(
-                # model="gpt-3.5-turbo",  # More reliable and supported model
-                model="gpt-4o",  # Use gpt-4o for better performance
-                api_key=api_key
-            )
-        
+        llm_instance = openai.LLM(
+            # model="gpt-3.5-turbo",  # More reliable and supported model
+            model=model,  # Use gpt-4o for better performance
+            api_key=api_key
+        )
         logger.info("Successfully created OpenAI LLM instance")
         return llm_instance
         
     except Exception as e:
         logger.error(f"Failed to create OpenAI LLM: {e}")
         raise
+
+def get_gemini_llm(model_name=None):
+    model = model_name if model_name is not None else "google/gemini-2.5-pro"
+    try:
+    # gemini_model = "google/gemini-2.5-flash-lite"
+        gemini_model = model
+        google_api_key = os.getenv("GOOGLE_API_KEY")
+        missing = [name for name, val in [
+            ("GOOGLE_API_KEY", google_api_key),
+            ("model", gemini_model)
+        ] if not val]
+        if missing:
+            raise ValueError(
+                "Missing required Gemini settings: " + ", ".join(missing) +
+                ". Ensure env vars are set and model is specified in engine_config.yaml"
+            )
+        logger.info(f"Initializing Gemini LLM {gemini_model}")
+        # from livekit.agents import inference
+        return inference.LLM(
+            model=gemini_model,
+            # extra_kwargs={
+            #     # "provider": "google",
+            #     "api_key": google_api_key
+            # }
+        )
+
+def get_azure_llm(model_name=None):
+    model_name=None
+    try:
+        azure_cfg = config.get("azure", {}) if isinstance(config, dict) else {}
+        azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT") or azure_cfg.get("endpoint")
+        azure_api_key = os.getenv("AZURE_OPENAI_API_KEY") or azure_cfg.get("api_key")
+        azure_api_version = os.getenv("AZURE_OPENAI_API_VERSION") or azure_cfg.get("api_version")
+        azure_deployment = (
+            os.getenv("AZURE_OPENAI_DEPLOYMENT")
+            or azure_cfg.get("deployment")
+            or config.get("model")
+        )
+        missing = [name for name, val in [
+            ("AZURE_OPENAI_ENDPOINT", azure_endpoint),
+            ("AZURE_OPENAI_API_KEY", azure_api_key),
+            ("AZURE_OPENAI_API_VERSION", azure_api_version),
+            ("AZURE_OPENAI_DEPLOYMENT/model", azure_deployment),
+        ] if not val]
+        if missing:
+            raise ValueError(
+                "Missing required Azure OpenAI settings: " + ", ".join(missing) +
+                ". Ensure env vars are set or provide azure.{endpoint, api_key, api_version, deployment} in engine_config.yaml; `model` can serve as deployment."
+            )
+        logger.info("Initializing Azure OpenAI LLM via with_azure using engine_config.yaml settings")
+        return openai.LLM.with_azure(
+            azure_deployment=azure_deployment,
+            azure_endpoint=azure_endpoint,
+            api_key=azure_api_key,
+            api_version=azure_api_version,
+        )
+    except Exception as error:
+        logger.error(f"Failed to create Azure OpenAI LLM instance: {error}")
+
+def get_llm_instance(primary, secondary, primary_model, secondary_model):
+    primary_llm = config_llm['primary'](primary_model)
+    secondary_llm = config_llm['secondary'](secondary_model)
+    return [primary_llm, secondary_llm]
+
+
+
 
 def get_tts(config: Dict[str, Any], voice_config: Dict[str, Any] = None):
     """Get configured TTS instance based on config"""

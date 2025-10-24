@@ -9,7 +9,7 @@ from datetime import datetime
 
 # Get current date dynamically
 current_date = datetime.now()
-current_date_str = current_date.strftime("%B %d, %Y")  # "May 28, 2025"
+current_date_str = current_date.strftime("%B %d, %Y")
 current_year = current_date.year
 next_year = current_year + 1
 
@@ -86,7 +86,6 @@ async def call_summary(transcript: str) -> str:
             "status_code": 400
         }
         return result
-
 
 async def extract_entities_from_transcript(transcript: str, fields: list[tuple[str, str]]) -> dict:
     """
@@ -340,189 +339,6 @@ async def extract_job_entities_mysyara(transcript: str, fields: list[tuple[str, 
             "Location": {"text": "NA", "value": "Not mentioned", "confidence": "NA"},
             "Slot_Booking_Time": {{ "text": "...", "value": "...", "confidence": "high/medium/low/NA" }}
         }
-
-async def extract_job_entities_shunya(transcript: str, fields: list[tuple[str, str]] = None) -> dict:
-    """
-    Extracts job-related lifestyle and earnings entities from a conversation transcript,
-    focusing exclusively on the USER's responses.
-    """
-    load_dotenv("/app/.env.local")
-    api_key = os.getenv("OPENAI_API_KEY")
-    
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY not found in environment variables")
-
-    client = OpenAI(api_key=api_key)
-
-    prompt = f"""
-        You are an information extraction system. Extract structured job-related details from the USER's responses ONLY in the conversation transcript below.
-
-        Ignore anything said by the agent, interviewer, or assistant. Focus only on what the USER says.
-
-        Extract the following fields:
-
-        1. current_company: Where the user is currently working (name of the company)
-        2. job_role: The user's job title or role (e.g., DevOps Engineer, Delivery Executive)
-        3. tech_or_nontech: Whether the user works in a technical or non-technical role
-        4. monthly_salary: The user's current monthly take-home salary (include amount and currency, if stated)
-        5. expected_salary: The salary or increment the user is expecting (amount or percentage, include currency if mentioned)
-        6. notice_period: The duration of the user's notice period before joining a new job
-        7. experience: Total years of relevant experience stated by the user
-        8. reconnect_date_time: If the user asks to be contacted later, extract the date/time they mention for reconnecting
-
-        Return your result as a valid JSON object in this format:
-        {{
-        "current_company" : {{ "text": ..., "value": ..., "confidence": ... }},
-        "job_role": {{ "text": ..., "value": ..., "confidence": ... }},
-        "tech_or_nontech": {{ "text": ..., "value": ..., "confidence": ... }},
-        "monthly_salary": {{ "text": ..., "value": ..., "confidence": ... }},
-        "expected_salary": {{ "text": ..., "value": ..., "confidence": ... }},
-        "notice_period": {{ "text": ..., "value": ..., "confidence": ... }},
-        "experience": {{ "text": ..., "value": ..., "confidence": ... }},
-        "reconnect_date_time": {{ "text": ..., "value": ..., "confidence": ... }}
-        }}
-
-        For each field:
-        - "text" is the exact text from the USER's speech that contains the information
-        - "value" is the clean, structured extraction (e.g., "2.5 lakhs", "DevOps Engineer", "Technical", etc.)
-        - "confidence" should be "high", "medium", or "low" depending on how clearly the user stated the information
-
-        Important rules:
-        - Only extract what the USER says explicitly. Do not infer from questions.
-        - If something is not mentioned by the user, set:
-        {{"text": "NA", "value": "Not mentioned", "confidence": "NA"}}
-        - If the user mentions both percentage and amount for salary, include both in the "value"
-        - Do not return any explanation or commentary. Only the JSON object.
-
-        Transcript:
-        {transcript}
-        """
-
-    try:
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo-0125",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a specialized entity extraction system that focuses on job-related lifestyle and earnings information from user responses in conversations. Extract only what the user explicitly states."
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            temperature=0.2,
-            # response_format="json"
-        )
-
-        content = response.choices[0].message.content
-        # Remove markdown ```json ... ``` wrapping if present
-        if content.startswith("```json"):
-            content = content[7:]  # Remove ```json\n
-        if content.endswith("```"):
-            content = content[:-3]  # Remove trailing ```
-
-        content = content.strip()
-        return json.loads(content)
-        # result = json.loads(llm_output)
-        # return {"result": result}
-
-    except Exception as e:
-        return {
-            "error": f"Entity extraction failed: {str(e)}",
-            "result": {
-                "current_company" : { "text": "NA", "value": "Not Mentioned", "confidence": "NA" },
-                "job_role": { "text": "NA", "value": "Not Mentioned", "confidence": "NA" },
-                "tech_or_nontech": { "text": "NA", "value": "Not Mentioned", "confidence": "NA" },
-                "monthly_salary": { "text": "NA", "value": "Not Mentioned", "confidence": "NA" },
-                "expected_salary": { "text": "NA", "value": "Not Mentioned", "confidence": "NA" },
-                "notice_period": { "text": "NA", "value": "Not Mentioned", "confidence": "NA" },
-                "experience": { "text": "NA", "value": "Not Mentioned", "confidence": "NA" },
-                "reconnect_date_time": { "text": "NA", "value": "Not Mentioned", "confidence": "NA" }
-            }
-        }
-
-
-def extract_lead_classification_azent(transcript: str, fields: list[tuple[str, str]] = None) -> dict:
-    """
-    Extracts lead classification and educational details from a conversation transcript,
-    focusing exclusively on the USER's responses.
-    """
-    
-    load_dotenv("/app/.env.local")
-    api_key = os.getenv("OPENAI_API_KEY")
-    
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY not found in environment variables")
-
-    client = OpenAI(api_key=api_key)
-    
-    
-    
-    # Get the prompt using the separate function
-    prompt = get_lead_classification_prompt(transcript, current_date_str, current_year, next_year)
-
-    try:
-        response = client.chat.completions.create(
-            # model="gpt-3.5-turbo-0125",
-            model="gpt-4o",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a specialized lead qualification system that extracts educational consultation information from user responses in conversations. Extract only what the user explicitly states and classify leads based on specific criteria."
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            temperature=0.1,
-            # response_format="json"
-        )
-
-        content = response.choices[0].message.content
-        # Remove markdown ```json ... ``` wrapping if present
-        if content.startswith("```json"):
-            content = content[7:]  # Remove ```json\n
-        if content.endswith("```"):
-            content = content[:-3]  # Remove trailing ```
-
-        content = content.strip()
-        return json.loads(content)
-
-    except Exception as e:
-        return {
-            "error": f"Lead classification failed: {str(e)}",
-            "result": {
-                "Lead_Strength": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                # "Reason": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Intent_Level": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Current_City": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Target_Country": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Primary_Country": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Target_Intake_Year": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Target_Intake_Month": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Target_Degree": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Current_Degree": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Score_Percentage": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Backlogs_Count": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Year_Of_Completion": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "12th_English_Percentage": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Education_Gap": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Work_Experience": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Years_Of_Experience": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Work_Sector": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Test_Status": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Test_Name": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Test_Date": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Test_Scores": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Tuition_Budget": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Visa_Refusal": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Visa_Refusal_Country": { "text": "NA", "value": "Not mentioned", "confidence": "NA" },
-                "Visa_Refusal_Reason": { "text": "NA", "value": "Not mentioned", "confidence": "NA" }
-            }
-        }
-
 
 async def evaluate_call_success(transcript: str) -> dict:
     """

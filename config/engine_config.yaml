@@ -15,10 +15,28 @@ bg_office_noise: False
 bg_thinking_sound: False
 idle_call_hungup: True
 
-llm: openai
-model: gpt4o
+LLM: 
+  primary_provider: azure #openai/azure/gemini
+  primary_model: gpt4o #gpt4o/gpt4/5/gemini_model names
 
-TTS: cartesia # elevenlabs/cartesia/aws/neuphonic/deepgram - azure/playai is not working currently.
+  fallback_provider: openai
+  fallback_model: gpt5
 
-STT: assemblyai #deepgram/assemblyai
+
+
+TTS: 
+  primary_provider: cartesia # elevenlabs/cartesia/aws/neuphonic/deepgram - azure/playai is not working currently.
+  primary_model: None
+
+  secondary_provider: deepgram
+  secondary_model: None
+
+
+STT: 
+  primary_provider: assemblyai #deepgram/assemblyai
+  primary_model: None
+
+  secondary_provider: deepgram
+  secondary_model: None
+
 idle_call_watcher_msg: "Hello there! Could you please respond? I am here to help."

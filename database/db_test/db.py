@@ -9,6 +9,9 @@ import logging
 import json
 import os
 from .database_config import get_database_url, get_engine_args, get_db_type
+from dotenv import load_dotenv
+
+load_dotenv(dotenv_path="/app/.env.local")
 
 # Database configuration
 DATABASE_URL = get_database_url()
@@ -262,7 +265,7 @@ def insert_call_start(room_name: str, agent_id: str, status: str, metadata: dict
     def _insert_call():
         from . import models  # Import here to avoid circular imports
         
-        BASE_URL = "http://sbi.vaaniresearch.com:1244"
+        BASE_URL = os.getenv("BASE_URL", "")
         call_transcription = f"{BASE_URL}/api/transcript/{room_name}"
         call_recording_url = f"{BASE_URL}/api/recording/{room_name}"
 

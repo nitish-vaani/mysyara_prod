@@ -57,7 +57,7 @@ logger = logging.getLogger("api")
 
 app = FastAPI(title="LiveKit Dispatch API with Dashboard") 
 open_ai_api = os.getenv("OPENAI_API_KEY")
-BASE_URL = "https://mysyara-prod-bk.vaaniresearch.com"
+BASE_URL = "http://mysyara-new.vaaniresearch.com:8000/nitish"
 client_name = os.getenv("CLIENT_NAME")
 print(f"Client Name: {client_name}")
 

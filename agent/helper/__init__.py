@@ -5,7 +5,7 @@ Contains modular utilities for configuration, logging, AI models, call handling,
 
 from .config_manager import config_manager
 from .logging_config import setup_logging, get_logger, get_transcript_logger
-from .ai_models import get_openai_llm, get_tts, get_stt_instance, get_vad_instance
+from .ai_models import get_openai_llm, get_tts, get_stt_instance, get_vad_instance, get_llm_instance
 from .call_handlers import CallState, handle_outbound_sip_call, handle_inbound_call, get_disconnect_reason
 from .database_helpers import insert_call_start_async, insert_call_end_async
 from .session_helpers import (prewarm_session, create_agent_session, setup_background_audio, 
@@ -24,7 +24,7 @@ __all__ = [
     'setup_logging', 'get_logger', 'get_transcript_logger',
     
     # AI Models
-    'get_openai_llm', 'get_tts', 'get_stt_instance', 'get_vad_instance',
+    'get_llm_instance', 'get_openai_llm', 'get_tts', 'get_stt_instance', 'get_vad_instance',
     
     # Call handling
     'CallState', 'handle_outbound_sip_call', 'handle_inbound_call', 'get_disconnect_reason',
