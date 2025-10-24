@@ -48,11 +48,8 @@ class ConfigManager:
     
     def get_openai_api_key(self) -> str:
         """Get and validate OpenAI API key"""
-        api_key_cerebras = self.get_env_var('CEREBRAS_API_KEY', None)
         api_key = self.get_env_var("OPENAI_API_KEY")
         logger.info(f"OpenAI API Key configured: {api_key[:15]}...{api_key[-4:]}")
-        if self.config['llm'] == 'cerebras':
-            return api_key_cerebras 
         return api_key
     
     def get_sip_trunk_id(self) -> str:

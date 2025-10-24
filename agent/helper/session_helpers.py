@@ -56,24 +56,24 @@ def create_agent_session(userdata: UserData, config: Dict[str, Any], agent_confi
     vad_instance = get_vad_instance()
     
     # Create session with all components
-    if config['STT'] == 'assemblyai': #this can throw issues as not all stt will support turn detection
+    if config['STT']['primary_provider'] == 'assemblyai': #this can throw issues as not all stt will support turn detection
         session = AgentSession[UserData](
             stt=stt.FallbackAdapter(stt_instance),
             # llm=llm_instance,
-            llm=llm.FallbackAdapter(llm_instance)
+            llm=llm.FallbackAdapter(llm_instance),
             tts=tts.FallbackAdapter(tts_instance),
             vad=vad_instance,
             # turn_detection="stt",
-            turn_detection=EnglishModel(),
+            # turn_detection=EnglishModel(),
             userdata=userdata
         )
     else:
         session = AgentSession[UserData](
             stt=stt.FallbackAdapter(stt_instance),
-            llm=llm_instance,
+            llm=llm.FallbackAdapter(llm_instance),
             tts=tts.FallbackAdapter(tts_instance),
             vad=vad_instance,
-            turn_detection=EnglishModel(),
+            # turn_detection=EnglishModel(),
             userdata=userdata
         )
     

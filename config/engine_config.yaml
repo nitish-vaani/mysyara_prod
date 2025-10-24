@@ -16,11 +16,11 @@ bg_thinking_sound: False
 idle_call_hungup: True
 
 LLM: 
-  primary_provider: azure #openai/azure/gemini
-  primary_model: gpt4o #gpt4o/gpt4/5/gemini_model names
+  primary_provider: openai #openai/azure/gemini
+  primary_model: gpt-4o #gpt4o/gpt4/5/gemini_model names
 
-  fallback_provider: openai
-  fallback_model: gpt5
+  secondary_provider: azure
+  secondary_model: gpt-40-mini
 
 
 
@@ -33,10 +33,10 @@ TTS:
 
 
 STT: 
-  primary_provider: assemblyai #deepgram/assemblyai
+  primary_provider: deepgram #deepgram/assemblyai
   primary_model: None
 
-  secondary_provider: deepgram
+  secondary_provider: assemblyai
   secondary_model: None
 
 idle_call_watcher_msg: "Hello there! Could you please respond? I am here to help."
