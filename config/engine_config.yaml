@@ -4,6 +4,10 @@ mode: SIP # SIP, CONSOLE
 record_audio: True
 audio_record_location: azure #azure/s3
 
+POST_PROCESS_LLM: gemini #azure/openai/gemini
+FALLBACK_LLM: openai
+
+
 store_transcription:
   switch: True # True, False
   where: azure # local, s3, both, azure

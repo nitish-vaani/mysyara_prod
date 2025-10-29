@@ -1,11 +1,8 @@
 import os
-from openai import OpenAI
 from dotenv import load_dotenv
 import json
 from datetime import datetime
-# from prompt_for_eval.azent import get_lead_classification_prompt
-
-
+from .llm_provider import get_llm_provider
 
 # Get current date dynamically
 current_date = datetime.now()
@@ -13,17 +10,8 @@ current_date_str = current_date.strftime("%B %d, %Y")
 current_year = current_date.year
 next_year = current_year + 1
 
-# Load API key from .env.local
+# Load environment variables
 load_dotenv("/app/.env.local")
-api_key = os.getenv("OPENAI_API_KEY")
-
-
-
-if not api_key:
-    raise ValueError("OPENAI_API_KEY not found in environment variables")
-
-# Instantiate the client
-client = OpenAI(api_key=api_key)
 
 
 async def has_user_speech(transcript: str) -> bool:
@@ -37,15 +25,9 @@ NO_USER_EVAL = "{\n\"clarity\": { \"score\": 0, \"feedback\": \"There is no user
 
 async def call_summary(transcript: str) -> str:
     """
-    Takes the complete transcipt and returns a 60-100 word summary for the conversation.
+    Takes the complete transcript and returns a 60-100 word summary for the conversation.
     """
-    load_dotenv("/app/.env.local")
-    api_key = os.getenv("OPENAI_API_KEY")
-    
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY not found in environment variables")
-    
-    client = OpenAI(api_key=api_key)
+    llm = get_llm_provider()
 
     prompt = f"""
     You are a professional conversation summarizer for a flight booking service. 
@@ -57,8 +39,7 @@ async def call_summary(transcript: str) -> str:
     {transcript}
     """
     try:
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo-0125",
+        content = llm.chat_completion(
             messages=[
                 {
                     "role": "system",
@@ -72,7 +53,6 @@ async def call_summary(transcript: str) -> str:
             temperature=0.2
         )
 
-        content = response.choices[0].message.content.strip()
         result = {
             "summary": content,
             "status_code": 200
@@ -80,7 +60,6 @@ async def call_summary(transcript: str) -> str:
         return result
 
     except Exception as e:
-        # Return default structure with "Not Mentioned"
         result = {
             "summary": "Some error generating summary, please try again later.",
             "status_code": 400
@@ -93,19 +72,12 @@ async def extract_entities_from_transcript(transcript: str, fields: list[tuple[s
     
     Parameters:
         transcript (str): The full conversation transcript.
-        entity_fields (list): A list of field names you want to extract.
+        fields (list): A list of tuples (field_name, description) you want to extract.
 
     Returns:
         dict: Structured result with extracted entities or default values on failure.
     """
-    # Load API Key
-    load_dotenv("/app/.env.local") 
-    api_key = os.getenv("OPENAI_API_KEY")
-    
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY not found in environment variables")
-
-    client = OpenAI(api_key=api_key)
+    llm = get_llm_provider()
 
     # Prepare dynamic prompt
     field_instructions = "\n".join(
@@ -142,8 +114,7 @@ async def extract_entities_from_transcript(transcript: str, fields: list[tuple[s
     """
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo-0125",
+        content = llm.chat_completion(
             messages=[
                 {
                     "role": "system",
@@ -157,18 +128,16 @@ async def extract_entities_from_transcript(transcript: str, fields: list[tuple[s
             temperature=0.2
         )
 
-        content = response.choices[0].message.content
         # Remove markdown ```json ... ``` wrapping if present
         if content.startswith("```json"):
-            content = content[7:]  # Remove ```json\n
+            content = content[7:]
         if content.endswith("```"):
-            content = content[:-3]  # Remove trailing ```
+            content = content[:-3]
 
         content = content.strip()
         return json.loads(content)
 
     except Exception as e:
-        # Return default structure with "Not Mentioned"
         return {
             "error": f"Entity extraction failed: {str(e)}",
             "result": None
@@ -181,13 +150,7 @@ async def conversation_eval(transcript: str) -> dict:
     
     If data is insufficient, score is 0 and feedback explains that.
     """
-    load_dotenv("/app/.env.local")
-    api_key = os.getenv("OPENAI_API_KEY")
-    
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY not found in environment variables")
-    
-    client = OpenAI(api_key=api_key)
+    llm = get_llm_provider()
 
     prompt = f"""
     You are an expert communication evaluator.
@@ -228,8 +191,7 @@ async def conversation_eval(transcript: str) -> dict:
     """
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo-0125",
+        content = llm.chat_completion(
             messages=[
                 {
                     "role": "system",
@@ -242,16 +204,14 @@ async def conversation_eval(transcript: str) -> dict:
             ],
             temperature=0.3
         )
-        content = response.choices[0].message.content
+        
         if content.startswith("```json"):
-            content = content[7:]  # Remove ```json\n
+            content = content[7:]
         if content.endswith("```"):
-            content = content[:-3]  # Remove trailing ```
+            content = content[:-3]
 
         content = content.strip()
         return json.loads(content)
-        # result = json.loads(llm_output)
-        # return result
     
     except Exception as e:
         return {
@@ -269,18 +229,14 @@ async def extract_job_entities_mysyara(transcript: str, fields: list[tuple[str, 
     """
     Extracts car-related entities from a conversation transcript, focusing on USER responses.
     """
-
-    if not os.getenv("OPENAI_API_KEY"):
-        raise ValueError("OPENAI_API_KEY not found in environment variables")
+    llm = get_llm_provider()
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
+        content = llm.chat_completion(
             messages=[
                 {
                     "role": "system",
-                    "content": "You extract structured car-related information from user responses in conversations. \
-                                Only consider information explicitly stated by the USER. Do not guess."
+                    "content": "You extract structured car-related information from user responses in conversations. Only consider information explicitly stated by the USER. Do not guess."
                 },
                 {
                     "role": "user",
@@ -305,7 +261,7 @@ async def extract_job_entities_mysyara(transcript: str, fields: list[tuple[str, 
         "Year": {{ "text": "...", "value": "...", "confidence": "high/medium/low/NA" }},
         "Approximate_Mileage": {{ "text": "...", "value": "...", "confidence": "high/medium/low/NA" }},
         "Location": {{ "text": "...", "value": "...", "confidence": "high/medium/low/NA" }},
-        "Slot_Booking_Time": {{ "text": "...", "value": "...", "confidence": "high/medium/low/NA" }},
+        "Slot_Booking_Time": {{ "text": "...", "value": "...", "confidence": "high/medium/low/NA" }}
         }}
 
         Transcript:
@@ -316,14 +272,11 @@ async def extract_job_entities_mysyara(transcript: str, fields: list[tuple[str, 
             temperature=0.2
         )
 
-        content = response.choices[0].message.content.strip()
-        # print("🧪 RAW RESPONSE:\n", content)
-
         # Remove markdown ```json ... ``` wrapping if present
         if content.startswith("```json"):
-            content = content[7:]  # Remove ```json\n
+            content = content[7:]
         if content.endswith("```"):
-            content = content[:-3]  # Remove trailing ```
+            content = content[:-3]
 
         content = content.strip()
         return json.loads(content)
@@ -337,7 +290,7 @@ async def extract_job_entities_mysyara(transcript: str, fields: list[tuple[str, 
             "Year": {"text": "NA", "value": "Not mentioned", "confidence": "NA"},
             "Approximate_Mileage": {"text": "NA", "value": "Not mentioned", "confidence": "NA"},
             "Location": {"text": "NA", "value": "Not mentioned", "confidence": "NA"},
-            "Slot_Booking_Time": {{ "text": "...", "value": "...", "confidence": "high/medium/low/NA" }}
+            "Slot_Booking_Time": {"text": "NA", "value": "Not mentioned", "confidence": "NA"}
         }
 
 async def evaluate_call_success(transcript: str) -> dict:
@@ -350,17 +303,7 @@ async def evaluate_call_success(transcript: str) -> dict:
     Returns:
         dict: {"status": "Success"|"Failure"|"Undetermined", "status_code": 200|400}
     """
-    load_dotenv("/app/.env.local")
-    api_key = os.getenv("OPENAI_API_KEY")
-    
-    if not api_key:
-        return {
-            "status": "Undetermined",
-            "status_code": 400,
-            "error": "API key not configured"
-        }
-    
-    client = OpenAI(api_key=api_key)
+    llm = get_llm_provider()
 
     prompt = f"""
     You are evaluating a customer service call transcript to determine if it was successful.
@@ -383,8 +326,7 @@ async def evaluate_call_success(transcript: str) -> dict:
     """
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
+        content = llm.chat_completion(
             messages=[
                 {
                     "role": "system",
@@ -395,11 +337,9 @@ async def evaluate_call_success(transcript: str) -> dict:
                     "content": prompt
                 }
             ],
-            temperature=0.1,  # Low temperature for consistent results
-            max_tokens=10     # Only need one word
+            temperature=0.1,
+            max_tokens=10
         )
-
-        content = response.choices[0].message.content.strip()
         
         # Validate response
         valid_statuses = ["Success", "Failure", "Undetermined"]
@@ -486,6 +426,4 @@ interrupted: False
                              ('Slot_Booking_Time', "If the User has asked for a specific time for pickup, what is it?")
                              ]
     result1 = asyncio.run(extract_entities_from_transcript(transcript, fields=field))
-    # result = asyncio.run(call_summary(transcript))
     print(json.dumps(result1, indent=2))
-
